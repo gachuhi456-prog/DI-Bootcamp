@@ -1,0 +1,202 @@
+const people = ["Greg", "Mary", "Devon", "James"];
+
+// Part I - Review about arrays
+
+// 1. Remove "Greg" from the people array
+people.shift();
+console.log("After removing Greg:", people);
+
+// 2. Replace "James" to "Jason"
+people[people.length - 1] = "Jason";
+console.log("After replacing James:", people);
+
+// 3. Add your name to the end of the people array
+people.push("YourName"); // Replace with your actual name
+console.log("After adding my name:", people);
+
+// 4. Console.log Mary's index
+console.log("Mary's index:", people.indexOf("Mary"));
+
+// 5. Make a copy using slice (NOT including "Mary" or your name)
+// Current: ["Mary", "Devon", "Jason", "YourName"]
+// Slice from index 1 to 3 (excludes index 3)
+let peopleCopy = people.slice(1, 3);
+console.log("Copy without Mary and my name:", peopleCopy);
+
+// 6. Index of "Foo"
+console.log("Index of Foo:", people.indexOf("Foo")); 
+// Returns -1 because "Foo" doesn't exist in the array
+
+// 7. Create variable 'last' with the last element
+let last = people[people.length - 1];
+console.log("Last element:", last);
+
+// Part II - Loops
+
+// Iterate through people array and console.log each person
+console.log("\nAll people:");
+for (let i = 0; i < people.length; i++) {
+    console.log(people[i]);
+}
+
+// Iterate and exit after "Devon"
+console.log("\nUntil Devon:");
+for (let i = 0; i < people.length; i++) {
+    console.log(people[i]);
+    if (people[i] === "Devon") {
+        break;
+    }
+}
+
+
+const colors = ["blue", "red", "green", "purple", "orange"];
+
+// Basic version
+for (let i = 0; i < colors.length; i++) {
+    console.log(`My #${i + 1} choice is ${colors[i]}`);
+}
+
+// Bonus: With correct suffixes
+const suffixes = ["st", "nd", "rd", "th", "th"];
+
+for (let i = 0; i < colors.length; i++) {
+    let suffix = suffixes[i] || "th";
+    console.log(`My ${i + 1}${suffix} choice is ${colors[i]}`);
+}
+
+
+// Prompt for a number (runs in browser, use readline in Node.js)
+let number = prompt("Enter a number:");
+console.log("Type:", typeof number); // "string"
+
+// Convert to number
+number = Number(number);
+
+// While loop - continues while number is smaller than 10
+while (number < 10) {
+    number = Number(prompt("Enter a new number (must be >= 10):"));
+}
+
+
+const building = {
+    numberOfFloors: 4,
+    numberOfAptByFloor: {
+        firstFloor: 3,
+        secondFloor: 4,
+        thirdFloor: 9,
+        fourthFloor: 2,
+    },
+    nameOfTenants: ["Sarah", "Dan", "David"],
+    numberOfRoomsAndRent: {
+        sarah: [3, 990],
+        dan: [4, 1000],
+        david: [1, 500],
+    },
+};
+
+// Console.log the number of floors
+console.log("Number of floors:", building.numberOfFloors);
+
+// Console.log apartments on floors 1 and 3
+console.log("Floor 1 apartments:", building.numberOfAptByFloor.firstFloor);
+console.log("Floor 3 apartments:", building.numberOfAptByFloor.thirdFloor);
+
+// Console.log second tenant and his rooms
+let secondTenant = building.nameOfTenants[1];
+console.log("Second tenant:", secondTenant);
+console.log("Rooms:", building.numberOfRoomsAndRent.dan[0]);
+
+// Check if Sarah's + David's rent > Dan's rent
+let sarahRent = building.numberOfRoomsAndRent.sarah[1];
+let davidRent = building.numberOfRoomsAndRent.david[1];
+let danRent = building.numberOfRoomsAndRent.dan[1];
+
+if (sarahRent + davidRent > danRent) {
+    building.numberOfRoomsAndRent.dan[1] = 1200;
+    console.log("Dan's rent increased to 1200");
+}
+
+
+const family = {
+    father: "John",
+    mother: "Jane",
+    son: "Jimmy",
+    daughter: "Jenny",
+    pets: 2
+};
+
+// Console.log the keys
+console.log("Keys:");
+for (let key in family) {
+    console.log(key);
+}
+
+// Console.log the values
+console.log("\nValues:");
+for (let key in family) {
+    console.log(family[key]);
+}
+
+
+
+const family = {
+    father: "John",
+    mother: "Jane",
+    son: "Jimmy",
+    daughter: "Jenny",
+    pets: 2
+};
+
+// Console.log the keys
+console.log("Keys:");
+for (let key in family) {
+    console.log(key);
+}
+
+// Console.log the values
+console.log("\nValues:");
+for (let key in family) {
+    console.log(family[key]);
+}
+
+
+const details = {
+    my: 'name',
+    is: 'Rudolf',
+    the: 'reindeer'
+};
+
+let result = "";
+
+for (let key in details) {
+    result += key + " " + details[key] + " ";
+}
+
+const details = {
+    my: 'name',
+    is: 'Rudolf',
+    the: 'reindeer'
+};
+
+let result = "";
+
+for (let key in details) {
+    result += key + " " + details[key] + " ";
+}
+
+console.log(result.trim()); // "my name is Rudolf the reindeer"
+
+
+const names = ["Jack", "Philip", "Sarah", "Amanda", "Bernard", "Kyle"];
+
+// Get first letter of each name
+let firstLetters = "";
+
+for (let i = 0; i < names.length; i++) {
+    firstLetters += names[i][0]; // names[i].charAt(0) also works
+}
+
+// Sort alphabetically and convert to uppercase (though they're already uppercase)
+let secretName = firstLetters.split('').sort().join('');
+
+console.log(secretName); // "ABJKPS"
