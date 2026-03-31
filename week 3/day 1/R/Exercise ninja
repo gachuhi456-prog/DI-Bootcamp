@@ -1,0 +1,244 @@
+// Create first person object
+const person1 = {
+    fullName: "John Smith",
+    mass: 78,        // kg
+    height: 1.75,    // meters
+    
+    calcBMI: function() {
+        return this.mass / (this.height * this.height);
+    }
+};
+
+// Create second person object
+const person2 = {
+    fullName: "Mary Johnson",
+    mass: 65,        // kg
+    height: 1.68,    // meters
+    
+    calcBMI: function() {
+        return this.mass / (this.height * this.height);
+    }
+};
+
+// Function to compare BMIs and display the result
+function compareBMI(personA, personB) {
+    const bmiA = personA.calcBMI();
+    const bmiB = personB.calcBMI();
+    
+    if (bmiA > bmiB) {
+        console.log(`${personA.fullName} has the highest BMI of ${bmiA.toFixed(2)}`);
+    } else if (bmiB > bmiA) {
+        console.log(`${personB.fullName} has the highest BMI of ${bmiB.toFixed(2)}`);
+    } else {
+        console.log(`Both ${personA.fullName} and ${personB.fullName} have the same BMI of ${bmiA.toFixed(2)}`);
+    }
+}
+
+// Run the comparison
+compareBMI(person1, person2);
+
+
+// Part 1 & 2: Calculate and display average
+function findAvg(gradesList) {
+    let sum = 0;
+    
+    for (let i = 0; i < gradesList.length; i++) {
+        sum += gradesList[i];
+    }
+    
+    const average = sum / gradesList.length;
+    console.log(`Your average is: ${average.toFixed(2)}`);
+    
+    return average;
+}
+
+// Part 3 & 4: Check if passed or failed
+function checkPassOrFail(average) {
+    if (average >= 65) {
+        console.log("Congratulations! You passed the course.");
+    } else {
+        console.log("You failed and must repeat the course.");
+    }
+}
+
+// BONUS: Combined function that calls the other two
+function evaluateGrades(gradesList) {
+    const average = findAvg(gradesList);
+    checkPassOrFail(average);
+}
+
+// Test cases
+console.log("=== Test 1: Passing grades ===");
+evaluateGrades([85, 90, 78, 92, 88]);
+
+console.log("\n=== Test 2: Failing grades ===");
+evaluateGrades([55, 60, 45, 50, 58]);
+
+console.log("\n=== Test 3: Borderline case ===");
+evaluateGrades([65, 65, 65]);
+
+
+// ============================================
+// EXERCISE 1: CHECKING THE BMI
+// ============================================
+
+console.log("=== EXERCISE 1: CHECKING THE BMI ===\n");
+
+const person1 = {
+    fullName: "John Smith",
+    mass: 78,
+    height: 1.75,
+    
+    calcBMI: function() {
+        return this.mass / (this.height * this.height);
+    }
+};
+
+const person2 = {
+    fullName: "Mary Johnson",
+    mass: 65,
+    height: 1.68,
+    
+    calcBMI: function() {
+        return this.mass / (this.height * this.height);
+    }
+};
+
+function compareBMI(personA, personB) {
+    const bmiA = personA.calcBMI();
+    const bmiB = personB.calcBMI();
+    
+    console.log(`${personA.fullName}'s BMI: ${bmiA.toFixed(2)}`);
+    console.log(`${personB.fullName}'s BMI: ${bmiB.toFixed(2)}`);
+    
+    if (bmiA > bmiB) {
+        console.log(`\n${personA.fullName} has the largest BMI.`);
+    } else if (bmiB > bmiA) {
+        console.log(`\n${personB.fullName} has the largest BMI.`);
+    } else {
+        console.log(`\nBoth have the same BMI.`);
+    }
+}
+
+compareBMI(person1, person2);
+
+
+// ============================================
+// EXERCISE 2: GRADE AVERAGE
+// ============================================
+
+console.log("\n\n=== EXERCISE 2: GRADE AVERAGE ===\n");
+
+function findAvg(gradesList) {
+    let sum = 0;
+    for (let i = 0; i < gradesList.length; i++) {
+        sum += gradesList[i];
+    }
+    const average = sum / gradesList.length;
+    console.log(`Average: ${average.toFixed(2)}`);
+    return average;
+}
+
+function checkPassOrFail(average) {
+    if (average >= 65) {
+        console.log("Result: PASSED");
+    } else {
+        console.log("Result: FAILED - Must repeat the course");
+    }
+}
+
+function evaluateGrades(gradesList) {
+    const average = findAvg(gradesList);
+    checkPassOrFail(average);
+}
+
+// Test with passing grades
+console.log("Test 1:");
+evaluateGrades([85, 90, 78, 92, 88]);
+
+// Test with failing grades  
+console.log("\nTest 2:");
+evaluateGrades([55, 60, 45, 50, 58]);
+
+
+// ============================================
+// EXERCISE 1: CHECKING THE BMI
+// ============================================
+
+console.log("=== EXERCISE 1: CHECKING THE BMI ===\n");
+
+const person1 = {
+    fullName: "John Smith",
+    mass: 78,
+    height: 1.75,
+    
+    calcBMI: function() {
+        return this.mass / (this.height * this.height);
+    }
+};
+
+const person2 = {
+    fullName: "Mary Johnson",
+    mass: 65,
+    height: 1.68,
+    
+    calcBMI: function() {
+        return this.mass / (this.height * this.height);
+    }
+};
+
+function compareBMI(personA, personB) {
+    const bmiA = personA.calcBMI();
+    const bmiB = personB.calcBMI();
+    
+    console.log(`${personA.fullName}'s BMI: ${bmiA.toFixed(2)}`);
+    console.log(`${personB.fullName}'s BMI: ${bmiB.toFixed(2)}`);
+    
+    if (bmiA > bmiB) {
+        console.log(`\n${personA.fullName} has the largest BMI.`);
+    } else if (bmiB > bmiA) {
+        console.log(`\n${personB.fullName} has the largest BMI.`);
+    } else {
+        console.log(`\nBoth have the same BMI.`);
+    }
+}
+
+compareBMI(person1, person2);
+
+
+// ============================================
+// EXERCISE 2: GRADE AVERAGE
+// ============================================
+
+console.log("\n\n=== EXERCISE 2: GRADE AVERAGE ===\n");
+
+function findAvg(gradesList) {
+    let sum = 0;
+    for (let i = 0; i < gradesList.length; i++) {
+        sum += gradesList[i];
+    }
+    const average = sum / gradesList.length;
+    console.log(`Average: ${average.toFixed(2)}`);
+    return average;
+}
+
+function checkPassOrFail(average) {
+    if (average >= 65) {
+        console.log("Result: PASSED");
+    } else {
+        console.log("Result: FAILED - Must repeat the course");
+    }
+}
+
+function evaluateGrades(gradesList) {
+    const average = findAvg(gradesList);
+    checkPassOrFail(average);
+}
+
+// Test with passing grades
+console.log("Test 1:");
+evaluateGrades([85, 90, 78, 92, 88]);
+
+// Test with failing grades  
+console.log("\nTest 2:");
+evaluateGrades([55, 60, 45, 50, 58]);
