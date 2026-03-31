@@ -1,0 +1,214 @@
+#1
+function displayNumbersDivisible(divisor = 23) {
+    const numbers = [];
+    let sum = 0;
+    
+    for (let i = 0; i <= 500; i++) {
+        if (i % divisor === 0) {
+            numbers.push(i);
+            sum += i;
+        }
+    }
+    
+    console.log(numbers.join(' '));
+    console.log('Sum :', sum);
+}
+
+// Test cases
+displayNumbersDivisible();      // Default divisor 23
+displayNumbersDivisible(3);     // Divisible by 3
+displayNumbersDivisible(45);    // Divisible by 45
+
+
+#2
+const stock = { 
+    "banana": 6, 
+    "apple": 0,
+    "pear": 12,
+    "orange": 32,
+    "blueberry": 1
+};
+
+const prices = {    
+    "banana": 4, 
+    "apple": 2, 
+    "pear": 1,
+    "orange": 1.5,
+    "blueberry": 10
+};
+
+const shoppingList = ["banana", "orange", "apple"];
+
+function myBill() {
+    let total = 0;
+    
+    for (const item of shoppingList) {
+        if (item in stock && stock[item] > 0) {
+            total += prices[item];
+            // Bonus: decrease stock
+            stock[item]--;
+        }
+    }
+    
+    return total;
+}
+
+console.log('Total:', myBill());
+console.log('Updated stock:', stock);
+
+#3
+function changeEnough(itemPrice, amountOfChange) {
+    const values = [0.25, 0.10, 0.05, 0.01]; // quarters, dimes, nickels, pennies
+    let totalChange = 0;
+    
+    for (let i = 0; i < amountOfChange.length; i++) {
+        totalChange += amountOfChange[i] * values[i];
+    }
+    
+    return totalChange >= itemPrice;
+}
+
+// Test cases
+console.log(changeEnough(4.25, [25, 20, 5, 0]));   // true (8.50 >= 4.25)
+console.log(changeEnough(14.11, [2, 100, 0, 0]));  // false (2.50 < 14.11)
+console.log(changeEnough(0.75, [0, 0, 20, 5]));    // true (1.05 >= 0.75)
+
+
+#4
+const readline = require('readline');
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+function askQuestion(question) {
+    return new Promise((resolve) => {
+        rl.question(question, (answer) => {
+            resolve(answer);
+        });
+    });
+}
+
+async function hotelCost() {
+    let nights;
+    while (true) {
+        nights = await askQuestion('How many nights would you like to stay? ');
+        nights = parseInt(nights);
+        if (!isNaN(nights) && nights > 0) break;
+        console.log('Please enter a valid number.');
+    }
+    return nights * 140;
+}
+
+async function planeRideCost() {
+    let destination;
+    while (true) {
+        destination = await askQuestion('What is your destination? ');
+        if (typeof destination === 'string' && destination.trim() !== '') break;
+        console.log('Please enter a valid destination.');
+    }
+    
+    const prices = {
+        'London': 183,
+        'Paris': 220
+    };
+    return prices[destination] || 300;
+}
+
+async function rentalCarCost() {
+    let days;
+    while (true) {
+        days = await askQuestion('How many days would you like to rent the car? ');
+        days = parseInt(days);
+        if (!isNaN(days) && days > 0) break;
+        console.log('Please enter a valid number.');
+    }
+    
+    let cost = days * 40;
+    if (days > 10) {
+        cost *= 0.95; // 5% discount
+    }
+    return cost;
+}
+
+async function totalVacationCost() {
+    const hotel = await hotelCost();
+    const plane = await planeRideCost();
+    const car = await rentalCarCost();
+    
+    const total = hotel + plane + car;
+    
+    console.log(`The car cost: $${car.toFixed(2)}`);
+    console.log(`The hotel cost: $${hotel.toFixed(2)}`);
+    console.log(`The plane tickets cost: $${plane.toFixed(2)}`);
+    console.log(`Total vacation cost: $${total.toFixed(2)}`);
+    
+    rl.close();
+}
+
+totalVacationCost();
+
+
+#5
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 5</title>
+</head>
+<body>
+    <div id="container">Users:</div>
+    <ul class="list">
+        <li>John</li>
+        <li>Pete</li>
+    </ul>
+    <ul class="list">
+        <li>David</li>
+        <li>Sarah</li>
+        <li>Dan</li>
+    </ul>
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+#6<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 6</title>
+</head>
+<body>
+    <div id="navBar">
+        <ul>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">My Friends</a></li>
+            <li><a href="#">Messenger</a></li>
+            <li><a href="#">My Pics</a></li>
+        </ul>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+
+#7
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 7</title>
+    <style>
+        .read {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <section class="listBooks"></section>
+    <script src="script.js"></script>
+</body>
+</html>
