@@ -1,0 +1,51 @@
+console.log("=== ONE LOOP APPROACH ===\n");
+
+let star = "";
+
+for (let i = 1; i <= 6; i++) {
+    star += "* ";
+    console.log(star);
+}
+
+
+console.log("=== NESTED FOR LOOPS APPROACH ===\n");
+
+for (let i = 1; i <= 6; i++) {
+    let line = "";
+    
+    for (let j = 1; j <= i; j++) {
+        line += "* ";
+    }
+    
+    console.log(line);
+}
+
+
+// ============================================
+// APPROACH 1: ONE LOOP
+// ============================================
+
+console.log("=== APPROACH 1: ONE LOOP ===\n");
+
+let star = "";
+
+for (let i = 1; i <= 6; i++) {
+    star += "* ";
+    console.log(star);
+}
+
+// ============================================
+// APPROACH 2: NESTED FOR LOOPS
+// ============================================
+
+console.log("\n=== APPROACH 2: NESTED FOR LOOPS ===\n");
+
+for (let i = 1; i <= 6; i++) {
+    let line = "";
+    
+    for (let j = 1; j <= i; j++) {
+        line += "* ";
+    }
+    
+    console.log(line);
+}
