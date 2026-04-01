@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 1 - Select Music Genre</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #display {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <label for="genres">Select a music genre:</label>
+    <select id="genres">
+        <option value="rock">Rock</option>
+        <option value="blues" selected>Blues</option>
+    </select>
+    
+    <div id="display"></div>
+
+    <script>
+        // Get the select element
+        const selectElement = document.getElementById('genres');
+        const displayDiv = document.getElementById('display');
+
+        // 1. Display the value of the selected option
+        function displaySelectedValue() {
+            const selectedValue = selectElement.value;
+            const selectedText = selectElement.options[selectElement.selectedIndex].text;
+            displayDiv.textContent = `Selected value: ${selectedValue} | Selected text: ${selectedText}`;
+            console.log('Selected value:', selectedValue);
+            console.log('Selected text:', selectedText);
+        }
+
+        // Display initial value
+        displaySelectedValue();
+
+        // Update display when selection changes
+        selectElement.addEventListener('change', displaySelectedValue);
+
+        // 2. Add Classic option
+        const classicOption = document.createElement('option');
+        classicOption.value = 'classic';
+        classicOption.textContent = 'Classic';
+        selectElement.appendChild(classicOption);
+
+        // 3. Make Classic selected by default
+        classicOption.selected = true;
+
+        // Update display to show the new default
+        displaySelectedValue();
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 2 - Delete Colors</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        form {
+            margin: 20px 0;
+        }
+        input[type="button"] {
+            padding: 8px 16px;
+            cursor: pointer;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        input[type="button"]:hover {
+            background-color: #cc0000;
+        }
+        #message {
+            margin-top: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <form>
+        <label for="colorSelect">Choose a color:</label><br><br>
+        <select id="colorSelect">
+            <option>Red</option>
+            <option>Green</option>
+            <option>White</option>
+            <option>Black</option>
+        </select>
+        <br><br>
+        <input type="button" value="Select and Remove" id="removeBtn">
+    </form>
+    <div id="message"></div>
+
+    <script>
+        // Get elements
+        const colorSelect = document.getElementById('colorSelect');
+        const removeBtn = document.getElementById('removeBtn');
+        const messageDiv = document.getElementById('message');
+
+        // Function to remove selected color
+        function removecolor() {
+            // Get the selected option
+            const selectedIndex = colorSelect.selectedIndex;
+            
+            // Check if there's anything to remove
+            if (selectedIndex === -1 || colorSelect.options.length === 0) {
+                messageDiv.textContent = 'No colors left to remove!';
+                return;
+            }
+
+            // Get the text of the option being removed
+            const removedColor = colorSelect.options[selectedIndex].text;
+            
+            // Remove the selected option
+            colorSelect.remove(selectedIndex);
+            
+            // Display message
+            messageDiv.textContent = `Removed: ${removedColor}`;
+            console.log(`Removed color: ${removedColor}`);
+            
+            // If no options left, disable the button
+            if (colorSelect.options.length === 0) {
+                removeBtn.disabled = true;
+                removeBtn.value = 'No colors left';
+                messageDiv.textContent = 'All colors have been removed!';
+            }
+        }
+
+        // Add click event listener to the button
+        removeBtn.addEventListener('click', removecolor);
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 3 - Shopping List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        #root {
+            border: 2px solid #333;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        form {
+            margin-bottom: 20px;
+        }
+        
+        input[type="text"] {
+            padding: 8px;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            margin-left: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        
+        #addBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #addBtn:hover {
+            background-color: #45a049;
+        }
+        
+        #clearBtn {
+            background-color: #f44336;
+            color: white;
+            margin-top: 10px;
+        }
+        
+        #clearBtn:hover {
+            background-color: #da190b;
+        }
+        
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        li {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            border-radius: 4px;
+        }
+        
+        .empty-message {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script>
+        // Create empty array for shopping list
+        let shoppingList = [];
+
+        // Get root element
+        const root = document.getElementById('root');
+
+        // Create title
+        const title = document.createElement('h2');
+        title.textContent = 'My Shopping List';
+        root.appendChild(title);
+
+        // Create form with text input and AddItem button
+        const form = document.createElement('form');
+        
+        const textInput = document.createElement('input');
+        textInput.type = 'text';
+        textInput.id = 'itemInput';
+        textInput.placeholder = 'Enter item to buy...';
+        
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button'; // Prevent form submission
+        addBtn.id = 'addBtn';
+        addBtn.textContent = 'Add Item';
+        
+        form.appendChild(textInput);
+        form.appendChild(addBtn);
+        root.appendChild(form);
+
+        // Create list to display items
+        const list = document.createElement('ul');
+        list.id = 'shoppingList';
+        root.appendChild(list);
+
+        // Create ClearAll button
+        const clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.id = 'clearBtn';
+        clearBtn.textContent = 'Clear All';
+        root.appendChild(clearBtn);
+
+        // Function to update the displayed list
+        function updateDisplay() {
+            list.innerHTML = ''; // Clear current display
+            
+            if (shoppingList.length === 0) {
+                const emptyMsg = document.createElement('li');
+                emptyMsg.className = 'empty-message';
+                emptyMsg.textContent = 'Your shopping list is empty';
+                list.appendChild(emptyMsg);
+            } else {
+                shoppingList.forEach((item, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${index + 1}. ${item}`;
+                    list.appendChild(li);
+                });
+            }
+        }
+
+        // Function to add item to shopping list
+        function addItem() {
+            const itemText = textInput.value.trim();
+            
+            if (itemText === '') {
+                alert('Please enter an item!');
+                return;
+            }
+            
+            // Add to array
+            shoppingList.push(itemText);
+            
+            // Clear input
+            textInput.value = '';
+            textInput.focus();
+            
+            // Update display
+            updateDisplay();
+            
+            console.log('Shopping list:', shoppingList);
+        }
+
+        // Function to clear all items
+        function clearAll() {
+            shoppingList = []; // Empty the array
+            updateDisplay();
+            console.log('Shopping list cleared');
+        }
+
+        // Add event listeners
+        addBtn.addEventListener('click', addItem);
+        clearBtn.addEventListener('click', clearAll);
+
+        // Allow Enter key to add item
+        textInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                addItem();
+            }
+        });
+
+        // Initial display
+        updateDisplay();
+    </script>
+</body>
+</html>

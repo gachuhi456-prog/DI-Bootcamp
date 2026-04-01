@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 1 - Timer</title>
+    <style>
+        p {
+            background: yellow;
+            color: red;
+        }
+        
+        #container {
+            min-height: 20px;
+            border: 1px dashed #ccc;
+            margin: 10px 0;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Timer Exercise</h2>
+    <div id="container"></div>
+    <button id="clear">Clear Interval</button>
+
+    <script>
+        // ============================================
+        // PART I: Alert "Hello World" after 2 seconds
+        // ============================================
+        setTimeout(function() {
+            alert("Hello World");
+        }, 2000);
+
+        // ============================================
+        // PART II: Add paragraph after 2 seconds
+        // ============================================
+        setTimeout(function() {
+            const container = document.getElementById('container');
+            const newParagraph = document.createElement('p');
+            newParagraph.textContent = 'Hello World';
+            container.appendChild(newParagraph);
+        }, 2000);
+
+        // ============================================
+        // PART III: Add paragraph every 2 seconds
+        // ============================================
+        const container = document.getElementById('container');
+        const clearButton = document.getElementById('clear');
+        
+        // Create interval that adds paragraph every 2 seconds
+        const intervalId = setInterval(function() {
+            const newParagraph = document.createElement('p');
+            newParagraph.textContent = 'Hello World';
+            container.appendChild(newParagraph);
+            
+            // Check if we have 5 paragraphs - if so, clear interval
+            const paragraphs = container.getElementsByTagName('p');
+            if (paragraphs.length >= 5) {
+                clearInterval(intervalId);
+                console.log('Interval cleared automatically - 5 paragraphs reached');
+            }
+        }, 2000);
+
+        // Also clear interval when button is clicked
+        clearButton.addEventListener('click', function() {
+            clearInterval(intervalId);
+            console.log('Interval cleared by button click');
+        });
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 2 - Move the Box</title>
+    <style>
+        #container {
+            width: 400px;
+            height: 400px;
+            position: relative;
+            background: yellow;
+            border: 2px solid #333;
+        }
+        
+        #animate {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            background-color: red;
+            left: 0;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <p><button onclick="myMove()">Click Me</button></p>
+    <div id="container">
+        <div id="animate"></div>
+    </div>
+
+    <script>
+        function myMove() {
+            const animateDiv = document.getElementById('animate');
+            const container = document.getElementById('container');
+            
+            // Get container width and box width to calculate end position
+            const containerWidth = container.offsetWidth;
+            const boxWidth = animateDiv.offsetWidth;
+            const endPosition = containerWidth - boxWidth; // 400 - 50 = 350px
+            
+            let currentPosition = 0;
+            
+            // Move 1px to the right every millisecond
+            const intervalId = setInterval(function() {
+                if (currentPosition >= endPosition) {
+                    // Stop when box reaches the end
+                    clearInterval(intervalId);
+                    console.log('Animation complete! Box reached the end.');
+                } else {
+                    currentPosition++;
+                    animateDiv.style.left = currentPosition + 'px';
+                }
+            }, 1); // 1 millisecond interval
+        }
+    </script>
+</body>
+</html>
