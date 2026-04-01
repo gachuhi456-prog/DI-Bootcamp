@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Mad Libs Game</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f0f8ff;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 250px;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px 0 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        #lib-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #lib-button:hover {
+            background-color: #45a049;
+        }
+
+        #shuffle-button {
+            background-color: #2196F3;
+            color: white;
+            display: none;
+        }
+
+        #shuffle-button:hover {
+            background-color: #0b7dda;
+        }
+
+        #story-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            border-radius: 5px;
+            display: none;
+        }
+
+        #story {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎭 Mad Libs</h1>
+
+    <form id="libform">
+        <label for="noun">Noun:</label>
+        <input type="text" id="noun" placeholder="e.g., cat, car, pizza"><br>
+        
+        <label for="adjective">Adjective:</label>
+        <input type="text" id="adjective" placeholder="e.g., crazy, blue, smelly"><br>
+        
+        <label for="person">Someone's Name:</label>
+        <input type="text" id="person" placeholder="e.g., Batman, Grandma"><br>
+        
+        <label for="verb">Verb:</label>
+        <input type="text" id="verb" placeholder="e.g., running, dancing"><br>
+        
+        <label for="place">A place:</label>
+        <input type="text" id="place" placeholder="e.g., supermarket, moon"><br>
+        
+        <button type="submit" id="lib-button">Lib it!</button>
+        <button type="button" id="shuffle-button">🔀 Shuffle Story</button>
+    </form>
+
+    <div id="error-msg" class="error"></div>
+
+    <div id="story-container">
+        <p><strong>Generated story:</strong></p>
+        <span id="story"></span>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const form = document.getElementById('libform');
+        const storySpan = document.getElementById('story');
+        const storyContainer = document.getElementById('story-container');
+        const errorMsg = document.getElementById('error-msg');
+        const shuffleButton = document.getElementById('shuffle-button');
+
+        // Store current values for shuffle functionality
+        let currentValues = {};
+
+        // Array of story templates
+        const storyTemplates = [
+            (noun, adjective, person, verb, place) => 
+                `Yesterday, ${person} went to the ${place} and saw a ${adjective} ${noun} ${verb} in circles. Everyone was shocked!`,
+
+            (noun, adjective, person, verb, place) => 
+                `Once upon a time, ${person} decided to take their ${adjective} ${noun} to the ${place}. Things got weird when it started ${verb} uncontrollably!`,
+
+            (noun, adjective, person, verb, place) => 
+                `${person} woke up to find a ${adjective} ${noun} in their kitchen. Without hesitation, they went ${verb} all the way to the ${place} to show their friends.`,
+
+            (noun, adjective, person, verb, place) => 
+                `At the ${place}, ${person} entered a contest for the most ${adjective} ${noun}. They won by ${verb} better than anyone else!`,
+
+            (noun, adjective, person, verb, place) => 
+                `"Stop ${verb}!" shouted ${person} as they chased the ${adjective} ${noun} through the ${place}. It was quite a sight to see.`
+        ];
+
+        // Function to get input values
+        function getValues() {
+            return {
+                noun: document.getElementById('noun').value.trim(),
+                adjective: document.getElementById('adjective').value.trim(),
+                person: document.getElementById('person').value.trim(),
+                verb: document.getElementById('verb').value.trim(),
+                place: document.getElementById('place').value.trim()
+            };
+        }
+
+        // Function to validate inputs
+        function validateInputs(values) {
+            for (let key in values) {
+                if (values[key] === '') {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Function to generate random story
+        function generateStory(values) {
+            const randomIndex = Math.floor(Math.random() * storyTemplates.length);
+            const template = storyTemplates[randomIndex];
+            return template(values.noun, values.adjective, values.person, values.verb, values.place);
+        }
+
+        // Form submission handler
+        form.addEventListener('submit', function(event) {
+            // Prevent form from submitting normally
+            event.preventDefault();
+
+            // Clear previous error
+            errorMsg.textContent = '';
+
+            // Get values
+            const values = getValues();
+            currentValues = values; // Store for shuffle
+
+            // Validate inputs
+            if (!validateInputs(values)) {
+                errorMsg.textContent = '⚠️ Please fill in all fields!';
+                storyContainer.style.display = 'none';
+                shuffleButton.style.display = 'none';
+                console.error('Validation failed: empty fields detected');
+                return;
+            }
+
+            // Generate and display story
+            const story = generateStory(values);
+            storySpan.textContent = story;
+            storyContainer.style.display = 'block';
+            shuffleButton.style.display = 'inline-block';
+
+            console.log('Story generated successfully:', story);
+            console.log('Values used:', values);
+        });
+
+        // Shuffle button handler
+        shuffleButton.addEventListener('click', function() {
+            // Use stored values to generate new random story
+            const newStory = generateStory(currentValues);
+            storySpan.textContent = newStory;
+            console.log('Story shuffled:', newStory);
+        });
+    </script>
+
+</body>
+</html>

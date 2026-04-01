@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 1 - Change the Article</title>
+    <style>
+        /* Fade out animation for bonus */
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .fade-out {
+            animation: fadeOut 1s forwards;
+        }
+    </style>
+</head>
+<body>
+    <article>
+        <h1>Some Facts</h1>
+        <h2>The Chocolate</h2>
+        <h3>History of the chocolate</h3>
+        <p>Chocolate is made from tropical Theobroma cacao tree seeds. 
+        Its earliest use dates back to the Olmec civilization in Mesoamerica.</p>
+        <p>After the European discovery of the Americas, chocolate became 
+        very popular in the wider world, and its demand exploded.</p>
+        <p>Chocolate has since become a popular food product that millions enjoy every day, 
+        thanks to its unique, rich, and sweet taste.</p> 
+        <p>But what effect does eating chocolate have on our health?</p> 
+    </article>
+    
+    <button id="boldBtn">Make Paragraphs Bold</button>
+
+    <script>
+        // 1. Retrieve the h1 and console.log it
+        const h1 = document.querySelector('h1');
+        console.log('H1 element:', h1);
+        console.log('H1 text content:', h1.textContent);
+
+        // 2. Remove the last paragraph in the <article> tag
+        const article = document.querySelector('article');
+        const paragraphs = article.getElementsByTagName('p');
+        const lastParagraph = paragraphs[paragraphs.length - 1];
+        lastParagraph.remove();
+        console.log('Last paragraph removed');
+
+        // 3. Add event listener to change h2 background to red when clicked
+        const h2 = document.querySelector('h2');
+        h2.addEventListener('click', function() {
+            this.style.backgroundColor = 'red';
+        });
+
+        // 4. Add event listener to hide h3 when clicked (display: none)
+        const h3 = document.querySelector('h3');
+        h3.addEventListener('click', function() {
+            this.style.display = 'none';
+        });
+
+        // 5. Add button to make all paragraphs bold
+        const boldBtn = document.getElementById('boldBtn');
+        boldBtn.addEventListener('click', function() {
+            const allParagraphs = document.querySelectorAll('article p');
+            allParagraphs.forEach(p => {
+                p.style.fontWeight = 'bold';
+            });
+        });
+
+        // BONUS 1: Random font size on h1 hover (0-100px)
+        h1.addEventListener('mouseover', function() {
+            const randomSize = Math.floor(Math.random() * 101); // 0 to 100
+            this.style.fontSize = randomSize + 'px';
+        });
+
+        // BONUS 2: Fade out 2nd paragraph on hover
+        // Note: Since we removed the last paragraph, paragraphs are re-indexed
+        // The 2nd paragraph is now at index 1
+        const secondParagraph = document.querySelectorAll('article p')[1];
+        if (secondParagraph) {
+            secondParagraph.addEventListener('mouseover', function() {
+                this.classList.add('fade-out');
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 2 - Work with Forms</title>
+</head>
+<body>
+    <form id="myForm">
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="firstname"><br>
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lastname"><br><br>
+        <input type="submit" value="Submit" id="submit">
+    </form> 
+    <ul class="usersAnswer"></ul>
+
+    <script>
+        // 1. Retrieve the form and console.log it
+        const form = document.getElementById('myForm');
+        console.log('Form element:', form);
+
+        // 2. Retrieve the inputs by their id and console.log them
+        const fnameInput = document.getElementById('fname');
+        const lnameInput = document.getElementById('lname');
+        console.log('First name input (by id):', fnameInput);
+        console.log('Last name input (by id):', lnameInput);
+
+        // 3. Retrieve the inputs by their name attribute and console.log them
+        const fnameByName = document.getElementsByName('firstname')[0];
+        const lnameByName = document.getElementsByName('lastname')[0];
+        console.log('First name input (by name):', fnameByName);
+        console.log('Last name input (by name):', lnameByName);
+
+        // 4. Handle form submission
+        form.addEventListener('submit', function(event) {
+            // Prevent default form submission (stops page reload)
+            // WHY: We want to handle the submission with JavaScript instead of 
+            // letting the browser submit to a server and reload the page
+            event.preventDefault();
+
+            // Get values
+            const firstName = fnameInput.value.trim();
+            const lastName = lnameInput.value.trim();
+
+            // Check if not empty
+            if (firstName === '' || lastName === '') {
+                alert('Please fill in both fields');
+                return;
+            }
+
+            // Get the ul element
+            const usersAnswerList = document.querySelector('.usersAnswer');
+
+            // Clear previous entries (optional - remove if you want to keep adding)
+            usersAnswerList.innerHTML = '';
+
+            // Create li for first name
+            const liFirst = document.createElement('li');
+            liFirst.textContent = firstName;
+            usersAnswerList.appendChild(liFirst);
+
+            // Create li for last name
+            const liLast = document.createElement('li');
+            liLast.textContent = lastName;
+            usersAnswerList.appendChild(liLast);
+
+            // Optional: Clear form after submission
+            // form.reset();
+        });
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 3 - Transform the Sentence</title>
+</head>
+<body>
+    <p id="myParagraph">
+        <strong>Hello</strong> I hope you are enjoying <strong>this</strong> class. At the
+        <strong>end</strong> you <strong>will</strong> be great Developers!
+        <strong>Enjoy</strong> the <strong>JavaScript</strong> lessons
+    </p>
+
+    <script>
+        // 1. Declare global variable
+        let allBoldItems;
+
+        // 2. Create function to collect all bold items
+        function getBoldItems() {
+            allBoldItems = document.querySelectorAll('strong');
+            console.log('Bold items collected:', allBoldItems);
+            return allBoldItems;
+        }
+
+        // 3. Create function to highlight (change color to blue)
+        function highlight() {
+            allBoldItems.forEach(item => {
+                item.style.color = 'blue';
+            });
+        }
+
+        // 4. Create function to return to default (change color to black)
+        function returnItemsToDefault() {
+            allBoldItems.forEach(item => {
+                item.style.color = 'black';
+            });
+        }
+
+        // Initialize: get bold items when page loads
+        getBoldItems();
+
+        // 5. Add event listeners to the paragraph
+        const paragraph = document.getElementById('myParagraph');
+        
+        // Call highlight on mouseover
+        paragraph.addEventListener('mouseover', highlight);
+        
+        // Call returnItemsToDefault on mouseout
+        paragraph.addEventListener('mouseout', returnItemsToDefault);
+    </script>
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Volume of a Sphere</title>
+    <style>
+        body {
+            padding-top: 30px;
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        label, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            width: 200px;
+        }
+
+        input[type="submit"] {
+            margin-top: 10px;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        #volume {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <p>Input radius value and get the volume of a sphere.</p>
+    <form id="MyForm">
+        <label for="radius">Radius</label>
+        <input type="text" name="radius" id="radius" required>
+        
+        <label for="volume">Volume</label>
+        <input type="text" name="volume" id="volume" readonly>
+        
+        <input type="submit" value="Calculate" id="submit">
+    </form>
+
+    <script>
+        // Get form and add submit event listener
+        const form = document.getElementById('MyForm');
+        
+        form.addEventListener('submit', function(event) {
+            // Prevent form submission (page reload)
+            event.preventDefault();
+            
+            // Get radius value
+            const radiusInput = document.getElementById('radius');
+            const radius = parseFloat(radiusInput.value);
+            
+            // Validate input
+            if (isNaN(radius) || radius < 0) {
+                alert('Please enter a valid positive number for radius');
+                return;
+            }
+            
+            // Calculate volume: V = 4/3 * π * r³
+            const volume = (4/3) * Math.PI * Math.pow(radius, 3);
+            
+            // Display result (rounded to 4 decimal places for readability)
+            const volumeInput = document.getElementById('volume');
+            volumeInput.value = volume.toFixed(4);
+        });
+    </script>
+</body>
+</html>
