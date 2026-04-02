@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coloring Squares - Pixel Art</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+            Coloring Squares</h1>
+            <p>Select a color, then click and drag on the canvas to draw</p>
+        </header>
+
+        <div class="controls">
+            <div id="color-grid" class="color-grid">
+                <!-- Color options will be generated dynamically by JS -->
+            </div>
+            <div class="current-color">
+                <span>Current Color:</span>
+                <div id="color-preview" class="color-preview"></div>
+            </div>
+        </div>
+
+        <div id="canvas" class="canvas">
+            <!-- Canvas squares will be generated dynamically by JS -->
+        </div>
+
+        <div class="actions">
+            <button id="clear-btn" class="btn">Clear Canvas</button>
+            <button id="random-btn" class="btn">Randomize Canvas</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
