@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 1 - GET Form</title>
+</head>
+<body>
+    <h1>Contact Form (GET Method)</h1>
+    
+    <form action="" method="GET">
+        <div>
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+        </div>
+        <br>
+        <div>
+            <label for="message">Message:</label><br>
+            <textarea id="message" name="message" rows="5" cols="30" placeholder="Write your message here..." required></textarea>
+        </div>
+        <br>
+        <input type="submit" value="Send">
+    </form>
+
+    <!-- Display submitted data -->
+    <div id="result"></div>
+
+    <script>
+        // Display GET data in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name');
+        const message = urlParams.get('message');
+        
+        if (name && message) {
+            document.getElementById('result').innerHTML = `
+                <h2>Submitted Data:</h2>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Message:</strong> ${message}</p>
+                <p><strong>Where it appeared:</strong> URL query string (see address bar above)</p>
+            `;
+        }
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 2 - POST Form</title>
+</head>
+<body>
+    <h1>Contact Form (POST Method)</h1>
+    
+    <form action="" method="POST">
+        <div>
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+        </div>
+        <br>
+        <div>
+            <label for="message">Message:</label><br>
+            <textarea id="message" name="message" rows="5" cols="30" placeholder="Write your message here..." required></textarea>
+        </div>
+        <br>
+        <input type="submit" value="Send">
+    </form>
+
+    <div id="info">
+        <h3>How to see POST data:</h3>
+        <ol>
+            <li>Open DevTools (F12)</li>
+            <li>Go to Network tab</li>
+            <li>Submit the form</li>
+            <li>Click on the request in the list</li>
+            <li>Look under "Payload" or "Form Data"</li>
+        </ol>
+    </div>
+
+    <!-- For Node.js server version, data will appear here -->
+    <div id="result"></div>
+
+    <!-- 
+    SERVER VERSION (Node.js + Express):
+    Save this as server.js and run: node server.js
+    -->
+    <script>
+        // Client-side: Note that without a server, POST data won't be visible in the page
+        // It's sent in the HTTP request body, not the URL
+        console.log("POST data is sent in the HTTP request body, not visible in URL");
+        console.log("Check Network tab in DevTools to see it");
+    </script>
+</body>
+</html>
+
+
+const marioGame = {
+  detail: "An amazing game!",
+  characters: {
+      mario: {
+        description: "Small and jumpy. Likes princesses.",
+        height: 10,
+        weight: 3,
+        speed: 12,
+      },
+      bowser: {
+        description: "Big and green, Hates princesses.",
+        height: 16,
+        weight: 6,
+        speed: 4,
+      },
+      princessPeach: {
+        description: "Beautiful princess.",
+        height: 12,
+        weight: 2,
+        speed: 2,
+      }
+  },
+};
+
+// 1. Convert to JSON (compact)
+const jsonString = JSON.stringify(marioGame);
+console.log("Compact JSON:");
+console.log(jsonString);
+
+// 2. Convert to JSON with pretty print (indentation)
+const prettyJsonString = JSON.stringify(marioGame, null, 2);
+console.log("\nPretty Printed JSON:");
+console.log(prettyJsonString);
+
+// What happens to nested objects?
+console.log("\n--- Analysis ---");
+console.log("Nested objects are converted to nested JSON objects");
+console.log("They remain nested in the JSON structure with proper braces");
+
+// For debugging with breakpoint
+debugger; // Open DevTools, this will pause execution here
+
+// You can inspect jsonString and prettyJsonString in the debugger
+
+// Parse back to verify
+const parsedBack = JSON.parse(jsonString);
+console.log("\nParsed back to JS object:");
+console.log(parsedBack);
+
+
