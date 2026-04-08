@@ -1,0 +1,73 @@
+let client = "John";
+
+const groceries = {
+    fruits: ["pear", "apple", "banana"],
+    vegetables: ["tomatoes", "cucumber", "salad"],
+    totalPrice: "20",
+    other: {
+        paid: true,
+        meansOfPayment: ["cash", "creditCard"]
+    }
+};
+
+// Arrow function to display fruits using forEach
+const displayGroceries = () => {
+    groceries.fruits.forEach(fruit => console.log(fruit));
+};
+
+// Arrow function to clone and test pass by value vs reference
+const cloneGroceries = () => {
+    // Create a copy of client (primitive - pass by value)
+    let user = client;
+    console.log("Before changing client:");
+    console.log("client:", client);  // John
+    console.log("user:", user);      // John
+    
+    // Change client to "Betty"
+    client = "Betty";
+    console.log("\nAfter changing client to 'Betty':");
+    console.log("client:", client);  // Betty
+    console.log("user:", user);      // John (still John!)
+    
+    // Explanation: NO, we won't see the modification in user variable
+    // because strings are primitives and passed BY VALUE.
+    // user got a COPY of the value "John", not a reference to client.
+    
+    // Create shopping variable referencing the same groceries object
+    let shopping = groceries;
+    console.log("\nBefore changing totalPrice:");
+    console.log("groceries.totalPrice:", groceries.totalPrice);  // 20$
+    console.log("shopping.totalPrice:", shopping.totalPrice);    // 20$
+    
+    // Change totalPrice to "35$"
+    shopping.totalPrice = "35$";
+    console.log("\nAfter changing shopping.totalPrice to '35$':");
+    console.log("groceries.totalPrice:", groceries.totalPrice);  // 35$
+    console.log("shopping.totalPrice:", shopping.totalPrice);    // 35$
+    
+    // Explanation: YES, we see the modification in both!
+    // because objects are passed BY REFERENCE.
+    // shopping and groceries point to the SAME object in memory.
+    
+    // Change paid to false
+    shopping.other.paid = false;
+    console.log("\nAfter changing shopping.other.paid to false:");
+    console.log("groceries.other.paid:", groceries.other.paid);  // false
+    console.log("shopping.other.paid:", shopping.other.paid);    // false
+    
+    // Explanation: YES, we see the modification in both!
+    // shopping.other and groceries.other reference the SAME nested object.
+};
+
+// Invoke functions
+console.log("=== Display Groceries ===");
+displayGroceries();
+
+console.log("\n=== Clone Groceries ===");
+cloneGroceries();
+
+// Final check
+console.log("\n=== Final Values ===");
+console.log("client:", client);                    // Betty
+console.log("groceries.totalPrice:", groceries.totalPrice);  // 35$
+console.log("groceries.other.paid:", groceries.other.paid);   // false
