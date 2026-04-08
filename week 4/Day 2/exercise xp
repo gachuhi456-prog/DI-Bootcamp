@@ -1,0 +1,66 @@
+const person = {
+    name: 'John Doe',
+    age: 25,
+    location: {
+        country: 'Canada',
+        city: 'Vancouver',
+        coordinates: [49.2827, -123.1207]
+    }
+}
+
+const {name, location: {country, city, coordinates: [lat, lng]}} = person;
+
+console.log(`I am ${name} from ${city}, ${country}. Latitude(${lat}), Longitude(${lng})`);
+
+function displayStudentInfo(objUser) {
+    const {first, last} = objUser;
+    return `Your full name is ${first} ${last}`;
+}
+
+console.log(displayStudentInfo({first: 'Elie', last: 'Schoppik'}));
+// Output: 'Your full name is Elie Schoppik'
+
+const users = { user1: 18273, user2: 92833, user3: 90315 };
+
+// Part 1: Convert object to array
+const usersArray = Object.entries(users);
+console.log(usersArray);
+// Output: [ [ 'user1', 18273 ], [ 'user2', 92833 ], [ 'user3', 90315 ] ]
+
+// Part 2: Multiply IDs by 2
+const usersArrayDoubled = usersArray.map(([user, id]) => [user, id * 2]);
+console.log(usersArrayDoubled);
+// Output: [ [ 'user1', 36546 ], [ 'user2', 185666 ], [ 'user3', 180630 ] ]
+
+// One-liner alternative:
+const doubled = Object.entries(users).map(([k, v]) => [k, v * 2]);
+
+class Person {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+const member = new Person('John');
+console.log(typeof member);
+
+class Dog {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+// ✅ CORRECT - Option 2
+class Labrador extends Dog {
+  constructor(name, size) {
+    super(name);        // Must call super() before using 'this'
+    this.size = size;
+  }
+}
+
+// ❌ Option 1: Missing super(), will throw ReferenceError
+// ❌ Option 3: super(name) but 'name' is not defined in scope
+// ❌ Option 4: Missing super(), tries to set this.name directly
+
+console.log([2] === [2]);  // false (different array references)
+console.log({} === {});      // false (different object references)

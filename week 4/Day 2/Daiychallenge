@@ -1,0 +1,61 @@
+// ==========================================
+// Video Class Definition
+// ==========================================
+class Video {
+    constructor(title, uploader, time) {
+        this.title = title;
+        this.uploader = uploader;
+        this.time = time;
+    }
+
+    watch() {
+        console.log(`${this.uploader} watched all ${this.time} seconds of ${this.title}!`);
+    }
+}
+
+// ==========================================
+// Basic Instances
+// ==========================================
+console.log("=== Basic Instances ===");
+
+// First Video instance
+const video1 = new Video("JavaScript Tutorial", "Alice", 300);
+video1.watch();  // Alice watched all 300 seconds of JavaScript Tutorial!
+
+// Second Video instance with different values
+const video2 = new Video("Cooking Pasta", "Bob", 180);
+video2.watch();  // Bob watched all 180 seconds of Cooking Pasta!
+
+// ==========================================
+// BONUS: Array with 5 Video instances
+// ==========================================
+console.log("\n=== Bonus: Array of Videos ===");
+
+// Best data structure: Array of objects (each object contains the data needed)
+const videoData = [
+    { title: "Learn React", uploader: "Charlie", time: 600 },
+    { title: "Guitar Basics", uploader: "Diana", time: 450 },
+    { title: "Yoga for Beginners", uploader: "Eve", time: 900 },
+    { title: "Photography Tips", uploader: "Frank", time: 240 },
+    { title: "Travel Vlog: Paris", uploader: "Grace", time: 1200 }
+];
+
+// Loop through array to instantiate Video instances
+const videoInstances = [];
+
+for (let i = 0; i < videoData.length; i++) {
+    const video = new Video(
+        videoData[i].title,
+        videoData[i].uploader,
+        videoData[i].time
+    );
+    videoInstances.push(video);
+}
+
+// Call watch() on all instances
+console.log("\n--- Watching all videos ---");
+videoInstances.forEach((video, index) => {
+    console.log(`Video ${index + 1}:`);
+    video.watch();
+});
+[p]

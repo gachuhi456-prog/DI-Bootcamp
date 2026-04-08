@@ -1,0 +1,113 @@
+// Method 1: Using reduce()
+function sumArray(arr) {
+    return arr.reduce((acc, num) => acc + num, 0);
+}
+
+// Method 2: Using for loop
+function sumArrayLoop(arr) {
+    let sum = 0;
+    for (let num of arr) {
+        sum += num;
+    }
+    return sum;
+}
+
+// Test
+const numbers = [1, 2, 3, 4, 5];
+console.log(sumArray(numbers));      // 15
+console.log(sumArrayLoop(numbers));  // 15
+
+// Method 1: Using Set (most efficient)
+function removeDuplicates(arr) {
+    return [...new Set(arr)];
+}
+
+// Method 2: Using filter and indexOf
+function removeDuplicatesFilter(arr) {
+    return arr.filter((item, index) => arr.indexOf(item) === index);
+}
+
+// Test
+const duplicates = [1, 2, 2, 3, 4, 4, 4, 5, 1];
+console.log(removeDuplicates(duplicates));       // [1, 2, 3, 4, 5]
+console.log(removeDuplicatesFilter(duplicates)); // [1, 2, 3, 4, 5]
+
+function cleanArray(arr) {
+    return arr.filter(value => {
+        // Keep only truthy values, but 0 and "" are falsy so we need to check explicitly
+        // Actually, we want to remove: null, 0, "", false, undefined, NaN
+        // So we keep values that are NOT in that list
+        
+        // Check for NaN first (NaN !== NaN)
+        if (Number.isNaN(value)) return false;
+        
+        // Remove other falsy values: null, 0, "", false, undefined
+        if (value === null || value === 0 || value === "" || value === false || value === undefined) {
+            return false;
+        }
+        
+        return true;
+    });
+}
+
+// More concise version using Boolean() but handling 0 and "" specially won't work
+// Better approach using explicit checks:
+function cleanArrayConcise(arr) {
+    return arr.filter(val => {
+        return val !== null && 
+               val !== 0 && 
+               val !== "" && 
+               val !== false && 
+               val !== undefined && 
+               !Number.isNaN(val);
+    });
+}
+
+// Test
+const dirtyArray = [NaN, 0, 15, false, -22, '', undefined, 47, null];
+console.log(cleanArray(dirtyArray));        // [15, -22, 47]
+console.log(cleanArrayConcise(dirtyArray)); // [15, -22, 47]
+
+function repeat(str, n = 1) {
+    let result = '';
+    for (let i = 0; i < n; i++) {
+        result += str;
+    }
+    return result;
+}
+
+// Alternative using recursion
+function repeatRecursive(str, n = 1) {
+    if (n <= 0) return '';
+    if (n === 1) return str;
+    return str + repeatRecursive(str, n - 1);
+}
+
+// Test
+console.log(repeat('Ha!', 3));        // "Ha!Ha!Ha!"
+console.log(repeat('Yo', 1));         // "Yo"
+console.log(repeat('Test', 0));       // ""
+console.log(repeat('Hi'));            // "Hi" (default is 1)
+
+console.log(repeatRecursive('Ha!', 3)); // "Ha!Ha!Ha!"
+
+const startLine = '     ||<- Start line';
+let turtle = '🐢';
+let rabbit = '🐇';
+
+// Line up at start line (position after the "||")
+// The start line has 5 spaces, then "||", so turtle/rabbit should start at position 7 (index 7)
+// Or visually aligned: '   🐢    ' (7 spaces then emoji)
+
+// Pad turtle to align with start line
+turtle = turtle.padStart(7, ' ');
+rabbit = rabbit.padStart(7, ' ');
+
+console.log(startLine);
+console.log(turtle);
+console.log(rabbit);
+
+// Expected output:
+// '     ||<- Start line'
+// '       🐢'
+// '       🐇'

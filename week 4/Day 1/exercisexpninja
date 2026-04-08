@@ -1,0 +1,138 @@
+const menu = [
+  { type: "starter", name: "Houmous with Pita" },
+  { type: "starter", name: "Vegetable Soup with Houmous peas" },
+  { type: "dessert", name: "Chocolate Cake" }
+];
+
+// 1. Check if at least one element is a dessert (using some() and ternary)
+const hasDessert = menu.some(item => item.type === "dessert") ? "Yes, we have dessert!" : "No dessert";
+console.log(hasDessert); // "Yes, we have dessert!"
+
+// 2. Check if ALL elements are starters (using every())
+const allStarters = menu.every(item => item.type === "starter");
+console.log(allStarters); // false (because there's a dessert)
+
+// 3. Check if at least one main course exists, if not add one (using some())
+const hasMainCourse = menu.some(item => item.type === "main course");
+if (!hasMainCourse) {
+  menu.push({ type: "main course", name: "Grilled Salmon with Potatoes" });
+}
+console.log(menu);
+
+// 4. Add vegetarian key based on vegetarian array
+const vegetarian = ["vegetable", "houmous", "eggs", "vanilla", "potatoes"];
+
+menu.forEach(item => {
+  // Check if name contains any vegetarian item (case-insensitive)
+  item.vegetarian = vegetarian.some(veg => 
+    item.name.toLowerCase().includes(veg.toLowerCase())
+  );
+});
+
+console.log(menu);
+/* Output:
+[
+  { type: 'starter', name: 'Houmous with Pita', vegetarian: true },
+  { type: 'starter', name: 'Vegetable Soup with Houmous peas', vegetarian: true },
+  { type: 'dessert', name: 'Chocolate Cake', vegetarian: false },
+  { type: 'main course', name: 'Grilled Salmon with Potatoes', vegetarian: true }
+]
+*/
+
+
+function string_chop(str, chunkLength) {
+  const chunks = [];
+  for (let i = 0; i < str.length; i += chunkLength) {
+    chunks.push(str.slice(i, i + chunkLength));
+  }
+  return chunks;
+}
+
+// Alternative using match() with regex
+function string_chop_regex(str, chunkLength) {
+  const regex = new RegExp(`.{1,${chunkLength}}`, 'g');
+  return str.match(regex) || [];
+}
+
+// Test
+console.log(string_chop('developers', 2)); 
+// ["de", "ve", "lo", "pe", "rs"]
+
+console.log(string_chop('hello', 2));
+// ["he", "ll", "o"]
+
+console.log(string_chop('abcdef', 3));
+// ["abc", "def"]
+
+console.log(string_chop_regex('developers', 2));
+// ["de", "ve", "lo", "pe", "rs"]
+
+
+function search_word(str, word) {
+  // Create regex to find all occurrences (case-insensitive, global)
+  const regex = new RegExp(word, 'gi');
+  const matches = str.match(regex);
+  
+  const count = matches ? matches.length : 0;
+  return `'${word}' was found ${count} time${count !== 1 ? 's' : ''}.`;
+}
+
+// Alternative using split()
+function search_word_split(str, word) {
+  const regex = new RegExp(`\\b${word}\\b`, 'gi');
+  const matches = str.match(regex);
+  const count = matches ? matches.length : 0;
+  return `'${word}' was found ${count} time${count !== 1 ? 's' : ''}.`;
+}
+
+// Test
+console.log(search_word('The quick brown fox', 'fox')); 
+// "'fox' was found 1 times."
+
+console.log(search_word('The fox jumps over the lazy fox', 'fox'));
+// "'fox' was found 2 times."
+
+console.log(search_word('Hello world', 'test'));
+// "'test' was found 0 times."
+
+console.log(search_word('The Fox is clever and the FOX is quick', 'fox'));
+// "'fox' was found 2 times." (case-insensitive)
+
+
+// Without creating a new array - modifies original
+function reverseArray(arr) {
+  let left = 0;
+  let right = arr.length - 1;
+  
+  while (left < right) {
+    // Swap elements
+    [arr[left], arr[right]] = [arr[right], arr[left]];
+    left++;
+    right--;
+  }
+  
+  return arr;
+}
+
+// Alternative: using built-in reverse() (also modifies in place)
+function reverseArrayBuiltIn(arr) {
+  return arr.reverse();
+}
+
+// Test
+const arr1 = [1, 2, 3, 4, 5];
+console.log(reverseArray(arr1)); // [5, 4, 3, 2, 1]
+
+const arr2 = [1, 2];
+console.log(reverseArray(arr2)); // [2, 1]
+
+const arr3 = [];
+console.log(reverseArray(arr3)); // []
+
+const arr4 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+console.log(reverseArray(arr4)); // [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+// Verify original arrays are modified
+console.log(arr1); // [5, 4, 3, 2, 1] - original modified!
+
+

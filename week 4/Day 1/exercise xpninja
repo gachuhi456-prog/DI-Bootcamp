@@ -1,0 +1,101 @@
+const data = [
+  { name: 'Butters', age: 3, type: 'dog' },
+  { name: 'Cuty', age: 5, type: 'rabbit' },
+  { name: 'Lizzy', age: 6, type: 'dog' },
+  { name: 'Red', age: 1, type: 'cat' },
+  { name: 'Joey', age: 3, type: 'dog' },
+  { name: 'Rex', age: 10, type: 'dog' },
+];
+
+// Method 1: Using a loop
+let sumLoop = 0;
+for (let animal of data) {
+  if (animal.type === 'dog') {
+    sumLoop += animal.age * 7;
+  }
+}
+console.log('Loop result:', sumLoop); // 154
+
+// Method 2: Using reduce()
+const sumReduce = data.reduce((acc, animal) => {
+  if (animal.type === 'dog') {
+    return acc + (animal.age * 7);
+  }
+  return acc;
+}, 0);
+
+console.log('Reduce result:', sumReduce); // 154
+
+// Verification: Butters(21) + Lizzy(42) + Joey(21) + Rex(70) = 154
+
+
+const userEmail3 = ' cannotfillemailformcorrectly@gmail.com ';
+
+// Single line solution using trim()
+const cleanEmail = userEmail3.trim();
+
+console.log(cleanEmail); // 'cannotfillemailformcorrectly@gmail.com'
+console.log(cleanEmail.length); // 36 (no leading/trailing spaces)
+
+
+const users = [
+  { firstName: 'Bradley', lastName: 'Bouley', role: 'Full Stack Resident' },
+  { firstName: 'Chloe', lastName: 'Alnaji', role: 'Full Stack Resident' },
+  { firstName: 'Jonathan', lastName: 'Baughn', role: 'Enterprise Instructor' },
+  { firstName: 'Michael', lastName: 'Herman', role: 'Lead Instructor' },
+  { firstName: 'Robert', lastName: 'Hajek', role: 'Full Stack Resident' },
+  { firstName: 'Wes', lastName: 'Reid', role: 'Instructor' },
+  { firstName: 'Zach', lastName: 'Klabunde', role: 'Instructor' }
+];
+
+// Method 1: Using forEach
+const usersObject = {};
+users.forEach(user => {
+  const fullName = `${user.firstName} ${user.lastName}`;
+  usersObject[fullName] = user.role;
+});
+
+console.log(usersObject);
+/* Output:
+{
+  'Bradley Bouley': 'Full Stack Resident',
+  'Chloe Alnaji': 'Full Stack Resident',
+  'Jonathan Baughn': 'Enterprise Instructor',
+  'Michael Herman': 'Lead Instructor',
+  'Robert Hajek': 'Full Stack Resident',
+  'Wes Reid': 'Instructor',
+  'Zach Klabunde': 'Instructor'
+}
+*/
+
+// Method 2: Using reduce() (more concise)
+const usersObjectReduce = users.reduce((acc, user) => {
+  acc[`${user.firstName} ${user.lastName}`] = user.role;
+  return acc;
+}, {});
+
+console.log(usersObjectReduce);
+
+
+const letters = ['x', 'y', 'z', 'z'];
+
+// Method 1: Using for loop
+const countLoop = {};
+for (let letter of letters) {
+  if (countLoop[letter]) {
+    countLoop[letter]++;
+  } else {
+    countLoop[letter] = 1;
+  }
+}
+console.log('Loop result:', countLoop); // { x: 1, y: 1, z: 2 }
+
+// Method 2: Using reduce()
+const countReduce = letters.reduce((acc, letter) => {
+  acc[letter] = (acc[letter] || 0) + 1;
+  return acc;
+}, {});
+
+console.log('Reduce result:', countReduce); // { x: 1, y: 1, z: 2 }
+
+
