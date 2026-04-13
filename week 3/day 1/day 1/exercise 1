@@ -1,0 +1,185 @@
+// ==========================================
+// 🌟 Exercise 1 : List of people
+// ==========================================
+const people = ["Greg", "Mary", "Devon", "James"];
+
+// Part I - Review about arrays
+
+// 1. Write code to remove “Greg” from the people array.
+people.shift(); 
+// people is now ["Mary", "Devon", "James"]
+
+// 2. Write code to replace “James” to “Jason”.
+people[2] = "Jason";
+// people is now ["Mary", "Devon", "Jason"]
+
+// 3. Write code to add your name to the end of the people array.
+people.push("YourName"); 
+// people is now ["Mary", "Devon", "Jason", "YourName"]
+
+// 4. Write code that console.logs Mary’s index.
+console.log("Mary's index:", people.indexOf("Mary"));
+
+// 5. Write code to make a copy of the people array using the slice method.
+// The copy should NOT include “Mary” or your name.
+// Current array: ["Mary", "Devon", "Jason", "YourName"]
+// We want elements from index 1 up to (but not including) index 3.
+const peopleCopy = people.slice(1, 3);
+console.log("Copy of array (no Mary/YourName):", peopleCopy);
+
+// 6. Write code that gives the index of “Foo”. Why does it return -1 ?
+console.log("Index of 'Foo':", people.indexOf("Foo")); 
+// It returns -1 because "Foo" does not exist in the array.
+
+// 7. Create a variable called last which value is the last element of the array.
+const last = people[people.length - 1];
+console.log("Last element:", last);
+
+// Part II - Loops
+
+// 1. Using a loop, iterate through the people array and console.log each person.
+console.log("--- Full Loop ---");
+for (let i = 0; i < people.length; i++) {
+    console.log(people[i]);
+}
+
+// 2. Using a loop, iterate through the people array and exit after you console.log “Devon”.
+console.log("--- Break Loop ---");
+for (let i = 0; i < people.length; i++) {
+    console.log(people[i]);
+    if (people[i] === "Devon") {
+        break;
+    }
+}
+
+
+// ==========================================
+// 🌟 Exercise 2 : Your favorite colors
+// ==========================================
+const colors = ["Blue", "Red", "Green", "Orange", "Purple"];
+
+// Standard Loop
+console.log("--- Colors ---");
+for (let i = 0; i < colors.length; i++) {
+    console.log(`My #${i + 1} choice is ${colors[i]}`);
+}
+
+// Bonus: Add suffixes (st, nd, rd, th)
+console.log("--- Bonus Colors ---");
+const suffixes = ["st", "nd", "rd", "th", "th"]; // Assuming 5 colors for this exercise
+for (let i = 0; i < colors.length; i++) {
+    console.log(`My ${i + 1}${suffixes[i]} choice is ${colors[i]}`);
+}
+
+
+// ==========================================
+// 🌟 Exercise 3 : Repeat the question
+// ==========================================
+// Note: prompt() works in a browser environment. 
+// In VS Code (Node.js), prompt is not defined by default. 
+// This logic represents how it would work in a browser.
+
+/*
+let userNumber;
+// Do-while loop ensures the code runs at least once before checking the condition
+do {
+    userNumber = prompt("Please enter a number:");
+} while (userNumber < 10);
+*/
+
+
+// ==========================================
+// 🌟 Exercise 4 : Building Management
+// ==========================================
+const building = {
+    numberOfFloors: 4,
+    numberOfAptByFloor: {
+        firstFloor: 3,
+        secondFloor: 4,
+        thirdFloor: 9,
+        fourthFloor: 2,
+    },
+    nameOfTenants: ["Sarah", "Dan", "David"],
+    numberOfRoomsAndRent:  {
+        sarah: [3, 990],
+        dan:  [4, 1000],
+        david: [1, 500],
+    },
+};
+
+// 1. Console.log the number of floors in the building.
+console.log("Number of floors:", building.numberOfFloors);
+
+// 2. Console.log how many apartments are on the floors 1 and 3.
+console.log("Apts on 1st floor:", building.numberOfAptByFloor.firstFloor);
+console.log("Apts on 3rd floor:", building.numberOfAptByFloor.thirdFloor);
+
+// 3. Console.log the name of the second tenant and the number of rooms he has.
+const secondTenant = building.nameOfTenants[1]; // "Dan"
+// Note: The key in numberOfRoomsAndRent is lowercase "dan"
+console.log(`Second tenant: ${secondTenant}, Rooms: ${building.numberOfRoomsAndRent[secondTenant.toLowerCase()][0]}`);
+
+// 4. Check if the sum of Sarah’s and David’s rent is bigger than Dan’s rent.
+const sarahRent = building.numberOfRoomsAndRent.sarah[1];
+const davidRent = building.numberOfRoomsAndRent.david[1];
+const danRent = building.numberOfRoomsAndRent.dan[1];
+
+if ((sarahRent + davidRent) > danRent) {
+    building.numberOfRoomsAndRent.dan[1] = 1200;
+    console.log("Dan's rent was increased to 1200.");
+} else {
+    console.log("Dan's rent remains the same.");
+}
+
+
+// ==========================================
+// 🌟 Exercise 5 : Family
+// ==========================================
+const family = {
+    dad: "John",
+    mom: "Jane",
+    daughter: "Emily",
+    son: "Mike"
+};
+
+console.log("--- Family Keys ---");
+for (let key in family) {
+    console.log(key);
+}
+
+console.log("--- Family Values ---");
+for (let key in family) {
+    console.log(family[key]);
+}
+
+
+// ==========================================
+// Exercise 6 : Rudolf
+// ==========================================
+const details = {
+  my: 'name',
+  is: 'Rudolf',
+  the: 'reindeer'
+};
+
+let sentence = "";
+for (let key in details) {
+    sentence += `${key} ${details[key]} `;
+}
+console.log(sentence.trim()); // Output: "my name is Rudolf the reindeer"
+
+
+// ==========================================
+// Exercise 7 : Secret Group
+// ==========================================
+const names = ["Jack", "Philip", "Sarah", "Amanda", "Bernard", "Kyle"];
+
+// 1. Map names to first letters
+// 2. Sort the letters alphabetically
+// 3. Join them into a string
+const secretName = names
+    .map(name => name[0])
+    .sort()
+    .join("");
+
+console.log("Secret Society Name:", secretName); // Output: "ABJKPS"

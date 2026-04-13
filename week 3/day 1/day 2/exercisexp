@@ -1,0 +1,214 @@
+function displayNumbersDivisible(divisor = 23) {
+    let sum = 0;
+    let output = "";
+
+    for (let i = 0; i <= 500; i++) {
+        if (i % divisor === 0) {
+            output += i + " ";
+            sum += i;
+        }
+    }
+
+    console.log(output.trim()); // Logs the numbers separated by spaces
+    console.log("Sum :", sum);
+}
+
+// Basic usage
+displayNumbersDivisible();
+
+// Bonus usage
+displayNumbersDivisible(3);
+displayNumbersDivisible(45);
+
+
+const stock = { 
+    "banana": 6, 
+    "apple": 0,
+    "pear": 12,
+    "orange": 32,
+    "blueberry":1
+}  
+
+const prices = {    
+    "banana": 4, 
+    "apple": 2, 
+    "pear": 1,
+    "orange": 1.5,
+    "blueberry":10
+} 
+
+const shoppingList = ["banana", "orange", "apple"];
+
+function myBill() {
+    let totalPrice = 0;
+
+    for (let item of shoppingList) {
+        // Check if item is in stock
+        if (stock[item] > 0) {
+            let price = prices[item];
+            totalPrice += price;
+
+            // Bonus: Decrease stock by 1
+            stock[item] -= 1;
+        }
+    }
+    
+    console.log("Total Price:", totalPrice);
+    return totalPrice;
+}
+
+myBill();
+
+
+function changeEnough(itemPrice, amountOfChange) {
+    // amountOfChange order: quarters, dimes, nickels, pennies
+    const quarters = amountOfChange[0] * 0.25;
+    const dimes = amountOfChange[1] * 0.10;
+    const nickels = amountOfChange[2] * 0.05;
+    const pennies = amountOfChange[3] * 0.01;
+
+    const totalChange = quarters + dimes + nickels + pennies;
+
+    return totalChange >= itemPrice;
+}
+
+// Examples
+console.log(changeEnough(4.25, [25, 20, 5, 0])); // returns true
+console.log(changeEnough(14.11, [2,100,0,0])); // returns false
+console.log(changeEnough(0.75, [0,0,20,5]));   // returns true
+
+
+function hotelCost() {
+    let nights;
+    while (true) {
+        nights = prompt("How many nights would you like to stay?");
+        if (nights !== null && !isNaN(nights) && nights.trim() !== "") {
+            break;
+        }
+    }
+    return nights * 140;
+}
+
+function planeRideCost() {
+    let destination;
+    while (true) {
+        destination = prompt("Where are you going?");
+        if (destination !== null && isNaN(destination) && destination.trim() !== "") {
+            break;
+        }
+    }
+
+    if (destination.toLowerCase() === "london") {
+        return 183;
+    } else if (destination.toLowerCase() === "paris") {
+        return 220;
+    } else {
+        return 300;
+    }
+}
+
+function rentalCarCost() {
+    let days;
+    while (true) {
+        days = prompt("How many days would you like to rent the car?");
+        if (days !== null && !isNaN(days) && days.trim() !== "") {
+            break;
+        }
+    }
+
+    let dailyCost = 40;
+    let totalCost = days * dailyCost;
+
+    if (days > 10) {
+        totalCost = totalCost * 0.95; // Apply 5% discount
+    }
+    return totalCost;
+}
+
+function totalVacationCost() {
+    const carCost = rentalCarCost();
+    const hotelPrice = hotelCost();
+    const planePrice = planeRideCost();
+
+    console.log(`The car cost: $${carCost}, the hotel cost: $${hotelPrice}, the plane tickets cost: $${planePrice}.`);
+    console.log(`Total Vacation Cost: $${carCost + hotelPrice + planePrice}`);
+}
+
+totalVacationCost();
+
+
+// 1. Retrieve the div and console.log it
+const containerDiv = document.getElementById("container");
+console.log(containerDiv);
+
+// 2. Change the name “Pete” to “Richard”.
+// Selecting the second list, then the second list item
+const listItems = document.querySelectorAll('.list li');
+listItems[1].textContent = "Richard";
+
+// 3. Delete the second <li> of the second <ul>.
+const secondUl = document.querySelectorAll('.list')[1];
+secondUl.children[1].remove(); // Removes 'Sarah' (index 1 of second UL)
+
+// 4. Change the name of the first <li> of each <ul> to your name.
+const allUls = document.querySelectorAll('.list');
+allUls.forEach(ul => {
+    ul.firstElementChild.textContent = "YourName"; // Replace with actual name
+});
+
+// --- Using Javascript (Part 2) ---
+
+// 5. Add a class called student_list to both of the <ul>'s.
+allUls.forEach(ul => ul.classList.add("student_list"));
+
+// 6. Add the classes university and attendance to the first <ul>.
+allUls[0].classList.add("university", "attendance");
+
+// 7. Add a “light blue” background color and some padding to the <div>.
+containerDiv.style.backgroundColor = "lightblue";
+containerDiv.style.padding = "20px";
+
+// 8. Do not display the <li> that contains the text node “Dan”.
+const danLi = Array.from(document.querySelectorAll('li')).find(li => li.textContent === "Dan");
+if (danLi) danLi.style.display = "none";
+
+// 9. Add a border to the <li> that contains the text node “Richard”.
+const richardLi = Array.from(document.querySelectorAll('li')).find(li => li.textContent === "Richard");
+if (richardLi) richardLi.style.border = "1px solid black";
+
+// 10. Change the font size of the whole body.
+document.body.style.fontSize = "18px";
+
+// Bonus
+if (containerDiv.style.backgroundColor === "lightblue") {
+    // Find users currently in the div (direct text content usually, but here we grab visible list items)
+    // The prompt implies users "in the div", which contains the lists.
+    const users = Array.from(document.querySelectorAll('li'))
+                       .filter(li => li.style.display !== "none")
+                       .map(li => li.textContent);
+    
+    // Alerting the first two users found as per example "x and y"
+    if(users.length >= 2) {
+        alert(`Hello ${users[0]} and ${users[1]}`);
+    }
+}
+
+
+// 1. Change the value of the id attribute from navBar to socialNetworkNavigation
+const navBarDiv = document.getElementById("navBar");
+navBarDiv.setAttribute("id", "socialNetworkNavigation");
+
+// 2. Add a new <li> with "Logout"
+const newLi = document.createElement("li");
+const newText = document.createTextNode("Logout");
+newLi.appendChild(newText);
+
+const ulElement = navBarDiv.querySelector("ul");
+ulElement.appendChild(newLi);
+
+// 3. Retrieve the first and last <li> elements and display their text
+const firstLi = ulElement.firstElementChild;
+const lastLi = ulElement.lastElementChild;
+
+console.log(firstLi.textContent); // Output: Profile
+console.log(lastLi.textContent);  // Output: Logout
