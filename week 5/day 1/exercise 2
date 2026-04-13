@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Pokedex App</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            --pokedex-red: #DC0A2D;
+            --pokedex-dark-red: #89061C;
+            --screen-blue: #232323; /* Dark screen background */
+            --screen-glow: #98CB98; /* Greenish tint for retro feel or just clean white/blue */
+            --ui-dark: #2b2b2b;
+            --button-blue: #2aaaff;
+            --button-yellow: #ffcb05;
+            --text-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #232323;
+            background-image: radial-gradient(circle at center, #333 0%, #111 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* --- Main Pokedex Container --- */
+        .pokedex-container {
+            background-color: var(--pokedex-red);
+            width: 400px;
+            height: 650px;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 
+                0 0 0 10px var(--pokedex-dark-red),
+                0 20px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- Header Lights --- */
+        .lights-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .big-light {
+            width: 60px;
+            height: 60px;
+            background: #46aaf5;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 0 10px #46aaf5;
+            animation: pulse 3s infinite;
+        }
+
+        .small-lights {
+            display: flex;
+            gap: 8px;
+        }
+
+        .small-light {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 2px solid rgba(0,0,0,0.2);
+        }
+
+        .red { background-color: #ff5959; }
+        .yellow { background-color: #ffcb05; }
+        .green { background-color: #5aff5a; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px #46aaf5; }
+            50% { box-shadow: 0 0 20px #46aaf5; }
+            100% { box-shadow: 0 0 5px #46aaf5; }
+        }
+
+        /* --- Screen Area --- */
+        .screen-container {
+            background-color: #dedede;
+            width: 100%;
+            flex-grow: 1;
+            border-radius: 10px 10px 10px 30px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .screen-glass {
+            background-color: var(--screen-blue);
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+            border: 2px solid #555;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* --- Pokemon Display --- */
+        .pokemon-img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+            transition: opacity 0.3s;
+        }
+
+        .pokemon-info {
+            text-align: center;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .pokemon-name {
+            text-transform: capitalize;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: var(--button-yellow);
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        .pokemon-id {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 15px;
