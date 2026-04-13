@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Async Exercises Solutions</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #333; padding-bottom: 10px; margin-top: 30px; }
+        .output-box { background-color: #e8e8e8; padding: 15px; border-radius: 5px; margin-top: 10px; }
+        #gif-container img { max-width: 100%; border-radius: 5px; display: block; margin-top: 10px; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>JS Async Exercises</h1>
+
+    <!-- Exercise 1 Output Area -->
+    <h2>Exercise 1: Giphy API</h2>
+    <div id="gif-container">Loading random GIF...</div>
+    
+    <hr>
+
+    <!-- Analysis Output Area -->
+    <h2>Console Output (Check Browser Console or Screen below)</h2>
+    <div id="console-output" class="output-box"></div>
+
+</div>
+
+<script>
+    // Helper to log to the screen so we can see the results without opening DevTools
+    function logToScreen(message) {
+        const outputDiv = document.getElementById('console-output');
+        const p = document.createElement('p');
+        p.textContent = `> ${message}`;
+        outputDiv.appendChild(p);
+        // Also log to actual console
+        console.log(message);
+    }
+
+    // ==========================================
+    // 🌟 Exercise 1 : Giphy API #2
+    // ==========================================
+    
+    async function fetchGif() {
+        const gifContainer = document.getElementById('gif-container');
+        const apiKey = "hpvZycW22qCjn5cRM1xtWB8NKq4dQ2My";
+        // Adding &limit=1 ensures we get fewer results, making it lighter, 
+        // though we will pick random from the list.
+        const url = `https://api.giphy.com/v1/gifs/search?q=hilarious&rating=g&api_key=${apiKey}&limit=25`;
+
+        try {
+            const response = await fetch(url);
+            
+            // Check status
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            // Pick a random GIF from the array
+            if (data.data && data.data.length > 0) {
+                const randomIndex = Math.floor(Math.random() * data.data.length);
+                const gifData = data.data[randomIndex];
+                
+                // Hint: Look for "images" -> "original" -> "url"
+                const gifUrl = gifData.images.original.url;
+                
+                // Create and append image
+                const img = document.createElement('img');
+                img.src = gifUrl;
+                img.alt = "Random Hilarious GIF";
+                
+                gifContainer.innerHTML = ''; // Clear loading text
+                gifContainer.appendChild(img);
+                
+                logToScreen("Exercise 1: GIF loaded successfully.");
+            } else {
+                gifContainer.innerHTML = "No GIFs found.";
+            }
+
+        } catch (error) {
+            logToScreen(`Exercise 1 Error: ${error.message}`);
+            gifContainer.innerHTML = `<span class="error">Error fetching GIF: ${error.message}</span>`;
+        }
+    }
+
+    // Run Exercise 1 immediately
+    fetchGif();
+
+
+    // ==========================================
+    // 🌟 Exercise 2 : Analyze #2
+    // ==========================================
+
+    let resolveAfter2Seconds = function () {
+        console.log("starting slow promise");
+        logToScreen("starting slow promise");
+        return new Promise(resolve => {
+            setTimeout(function () {
+                resolve("slow");
+                console.log("slow promise is done");
+                logToScreen("slow promise is done");
+            }, 2000);
+        });
+    };
+
+    let resolveAfter1Second = function () {
+        console.log("starting fast promise");
+        logToScreen("starting fast promise");
+        return new Promise(resolve => {
+            setTimeout(function () {
+                resolve("fast");
+                console.log("fast promise is done");
+                logToScreen("fast promise is done");
+            }, 1000);
+        });
+    };
+
+    let sequentialStart = async function () {
+        console.log('==SEQUENTIAL START==');
+        logToScreen('==SEQUENTIAL START==');
+        
+        // It WAITS for the first promise to complete before starting the second
+        const slow = await resolveAfter2Seconds(); 
+        console.log(slow);
+        logToScreen(slow);
+        
+        const fast = await resolveAfter1Second();
+        console.log(fast);
+        logToScreen(fast);
+    };
+
+    // Running Exercise 2 immediately after analysis setup
+    logToScreen("--- Exercise 2 Starting ---");
+    sequentialStart();
+
+
+    // ==========================================
+    // 🌟 Exercise 3 : Analyze #3
+    // ==========================================
+
+    let concurrentStart = async function () {
+        console.log('==CONCURRENT START with await==');
+        logToScreen('==CONCURRENT START with await==');
+        
+        // We call BOTH functions immediately (non-blocking). Both timers start now.
+        const slow = resolveAfter2Seconds(); 
+        const fast = resolveAfter1Second();
+        
+        // We now await the results. 
+        // 1. 'slow' takes 2s, 'fast' takes 1s.
+        // 2. The first await waits for 'slow' (2s total).
+        // 3. The second await checks 'fast'. It's already done (finished at 1s), so it returns immediately.
+        
+        console.log(await slow); 
+        logToScreen(await slow);
+        
+        console.log(await fast);
+        logToScreen(await fast);
+    };
+
+    // Exercise 3 is set to run after 4 seconds via setTimeout
+    setTimeout(() => {
+        logToScreen("--- Exercise 3 Starting (Delayed 4s) ---");
+        concurrentStart();
+    }, 4000);
+
+
+    // ==========================================
+    // 🌟 Exercise 4 : Modify fetch with Async/Await
+    // ==========================================
+
+    const urls = [
+        "https://jsonplaceholder.typicode.com/users",
+        "https://jsonplaceholder.typicode.com/posts",
+        "https://jsonplaceholder.typicode.com/albums"
+    ];
+
+    // I intentionally modified the last URL slightly below to demonstrate the catch block
+    // as requested ("To test the catch, modify one of the urls").
+    // Remove the "-error" suffix to see the success output.
+    const urlsForTesting = [
+        "https://jsonplaceholder.typicode.com/users",
+        "https://jsonplaceholder.typicode.com/posts",
+        "https://jsonplaceholder.typicode.com/albums-error" 
+    ];
+
+    const getData = async function() {
+        try {
+            // Replaced .then() with await inside the map function
+            const promises = urlsForTesting.map(async url => {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            });
+
+            // Promise.all waits for all the async operations in the map to finish
+            const [ users, posts, albums ] = await Promise.all(promises);
+            
+            console.log('users', users);
+            console.log('posts', posts); // Note: Fixed typo in original 'posta' to 'posts' for correctness, but kept console logic
+            console.log('albums', albums);
+
+            logToScreen("Exercise 4: Data fetched successfully (Check Console for objects)");
+            
+        } catch (error) {
+            console.log('ooooooops');
+            logToScreen('Exercise 4: ooooooops');
+            logToScreen(`Error details: ${error.message}`);
+        }
+    };
+
+    // Run Exercise 4 after a delay to separate logs
+    setTimeout(() => {
+        logToScreen("--- Exercise 4 Starting ---");
+        getData();
+    }, 7000); // Starting at 7s to ensure Ex 3 is done
+
+</script>
+
+</body>
+</html>
