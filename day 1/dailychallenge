@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter App</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #50E3C2;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --shadow: 0 10px 25px rgba(0,0,0,0.1);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* --- Main Card --- */
+        .converter-card {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        h1 i {
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+
+        /* --- Form Elements --- */
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background-color: #fff;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* --- Currency Controls Area --- */
+        .currency-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .select-wrapper {
+            flex: 1;
+        }
+
+        /* --- Switch Button --- */
+        .switch-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-top: 24px; /* Align with input boxes roughly */
+        }
+
+        .switch-btn:hover {
+            background-color: #357ABD;
+            transform: rotate(180deg);
+        }
+
+        /* --- Convert Button --- */
+        .convert-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 1.5rem;
+        }
+
+        .convert-btn:hover {
+            background-color: #357ABD;
+        }
+
+        .convert-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* --- Result Display --- */
+        .result-container {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px dashed #ccc;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-text {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            font-weight: bold;
+        }
+
+        .result-rate {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        /* --- Loading & Error States --- */
+        .status-message {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .error { color: #e74c3c; }
+        .loading { color: var(--primary-color); }
+
+        .hidden { display: none; }
+
+        /* Spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border-left-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="converter-card">
+        <h1><i class="fa-solid fa-money-bill-transfer"></i> Currency Converter</h1>
+
+        <!-- Amount Input -->
+        <div class="input-group">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" value="1" min="0" placeholder="Enter amount">
+        </div>
+
+        <!-- From / To Selectors -->
+        <div class="currency-row">
+            <div class="select-wrapper">
+                <label for="fromCurrency">From</label>
+                <select id="fromCurrency">
+                    <option value="" disabled selected>Loading...</option>
+                </select>
+            </div>
+
+            <!-- Switch Button -->
+            <button id="switchBtn" class="switch-btn" title="Switch Currencies">
+                <i class="fa-solid fa-arrow-right-arrow-left"></i>
+            </button>
+
+            <div class="select-wrapper">
+                <label for="toCurrency">To</label>
+                <select id="toCurrency">
+                    <option value="" disabled selected>Loading...</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Convert Button -->
+        <button id="convertBtn" class="convert-btn">Convert</button>
+
+        <!-- Status Messages -->
+        <div id="loadingMsg" class="status-message hidden">
+            <span class="spinner"></span> Fetching rates...
+        </div>
+        <div id="errorMsg" class="status-message error hidden"></div>
+
+        <!-- Result -->
+        <div class="result-container">
+            <div id="resultText" class="result-text">---</div>
+            <div id="exchangeRateDisplay" class="result-rate"></div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        // PLEASE PASTE YOUR FREE API KEY FROM https://www.exchangerate-api.com/ BELOW
+        const API_KEY = 'YOUR_API_KEY_HERE'; 
+        
+        const BASE_URL = `https://v6.exchangerate-api.com/v6/${API_KEY}`;
+
+        // ==========================================
+        // DOM ELEMENTS
+        // ==========================================
+        const amountEl = document.getElementById('amount');
+        const fromCurrencyEl = document.getElementById('fromCurrency');
+        const toCurrencyEl = document.getElementById('toCurrency');
+        const convertBtn = document.getElementById('convertBtn');
+        const switchBtn = document.getElementById('switchBtn');
+        const resultTextEl = document.getElementById('resultText');
+        const exchangeRateDisplayEl = document.getElementById('exchangeRateDisplay');
+        const loadingMsg = document.getElementById('loadingMsg');
+        const errorMsg = document.getElementById('errorMsg');
+
+        // ==========================================
+        // FUNCTIONS
+        // ==========================================
+
+        // 1. Fetch Supported Currencies
+        async function populateCurrencies() {
+            showLoading(true, "Loading currencies...");
+            try {
+                const response = await fetch(`${BASE_URL}/codes`);
+                
+                if (!response.ok) throw new Error("Failed to fetch currency codes");
+
+                const data = await response.json();
+                
+                if(data.result === "success") {
+                    const currencyCodes = data.supported_codes;
+                    
+                    // Clear loading options
+                    fromCurrencyEl.innerHTML = '';
+                    toCurrencyEl.innerHTML = '';
+
+                    // Populate Selects
+                    currencyCodes.forEach(([code, name]) => {
+                        const option1 = document.createElement('option');
+                        option1.value = code;
+                        option1.textContent = `${code} - ${name}`;
+                        fromCurrencyEl.appendChild(option1);
+
+                        const option2 = document.createElement('option');
+                        option2.value = code;
+                        option2.textContent = `${code} - ${name}`;
+                        toCurrencyEl.appendChild(option2);
+                    });
+
+                    // Set Defaults
+                    fromCurrencyEl.value = "USD";
+                    toCurrencyEl.value = "EUR";
+                    
+                } else {
+                    throw new Error("API Error fetching codes");
+                }
+            } catch (error) {
+                console.error(error);
+                showError("Error loading currencies. Please check your API Key.");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 2. Perform Conversion (Pair Conversion)
+        async function convertCurrency() {
+            const amount = parseFloat(amountEl.value);
+            const from = fromCurrencyEl.value;
+            const to = toCurrencyEl.value;
+
+            // Validation
+            if (isNaN(amount) || amount <= 0) {
+                showError("Please enter a valid amount.");
+                return;
+            }
+            if (!from || !to) {
+                showError("Please select both currencies.");
+                return;
+            }
+            if (API_KEY === 'YOUR_API_KEY_HERE' || API_KEY === '') {
+                showError("Please edit the code and insert a valid API Key.");
+                return;
+            }
+
+            showLoading(true, "Calculating conversion...");
+            errorMsg.classList.add('hidden');
+            resultTextEl.textContent = "---";
+            exchangeRateDisplayEl.textContent = "";
+
+            try {
+                // Endpoint: /pair/{from}/{to}/{amount}
+                const url = `${BASE_URL}/pair/${from}/${to}/${amount}`;
+                
+                const response = await fetch(url);
+
+                if (!response.ok) throw new Error("Network response was not ok");
+
+                const data = await response.json();
+
+                if (data.result === "success") {
+                    // Display Result
+                    const convertedAmount = data.conversion_result;
+                    const rate = data.conversion_rate;
+
+                    // Format numbers nicely
+                    resultTextEl.textContent = `${convertedAmount.toLocaleString(undefined, {maximumFractionDigits: 2})} ${to}`;
+                    exchangeRateDisplayEl.textContent = `1 ${from} = ${rate} ${to}`;
+                    
+                } else {
+                    throw new Error("Conversion failed");
+                }
+
+            } catch (error) {
+                console.error(error);
+                showError("Oh no! That conversion failed.");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 3. Switch Currencies
+        function switchCurrencies() {
+            const temp = fromCurrencyEl.value;
+            fromCurrencyEl.value = toCurrencyEl.value;
+            toCurrencyEl.value = temp;
+            
+            // Automatically trigger conversion if we already have a valid result showing
+            // Or just let the user click convert. 
+            // For better UX, let's trigger it if the result area isn't empty.
+            if(resultTextEl.textContent !== '---') {
+                convertCurrency();
+            }
+        }
+
+        // UI Helpers
+        function showLoading(isLoading, text) {
+            if (isLoading) {
+                loadingMsg.innerHTML = `<span class="spinner"></span> ${text}`;
+                loadingMsg.classList.remove('hidden');
+                convertBtn.disabled = true;
+            } else {
+                loadingMsg.classList.add('hidden');
+                convertBtn.disabled = false;
+            }
+        }
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.classList.remove('hidden');
+            loadingMsg.classList.add('hidden');
+            convertBtn.disabled = false;
+        }
+
+        // ==========================================
+        // EVENT LISTENERS
+        // ==========================================
+        convertBtn.addEventListener('click', convertCurrency);
+        switchBtn.addEventListener('click', switchCurrencies);
+
+        // Initialize App on Load
+        window.addEventListener('DOMContentLoaded', populateCurrencies);
+
+    </script>
+</body>
+</html>

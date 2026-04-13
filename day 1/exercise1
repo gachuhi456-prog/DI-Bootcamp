@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Wars Character Database</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    
+    <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            --sw-yellow: #FFE81F;
+            --sw-black: #000000;
+            --sw-dark: #151515;
+            --sw-gray: #2a2a2a;
+            --text-light: #eeeeee;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--sw-black);
+            background-image: radial-gradient(circle at center, #2a2a2a 0%, #000000 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Header --- */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+        }
+
+        h1 {
+            color: var(--sw-yellow);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(255, 232, 31, 0.3);
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* --- Main Container --- */
+        main {
+            width: 100%;
+            max-width: 450px;
+            padding: 0 1rem;
+        }
+
+        /* --- Character Card --- */
+        .character-card {
+            background-color: var(--sw-gray);
+            border: 2px solid var(--sw-yellow);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .character-image {
+            width: 120px;
+            height: 120px;
+            background-color: #000;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem auto;
+            border: 3px solid var(--sw-yellow);
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--sw-yellow);
+        }
+
+        .char-name {
+            font-size: 1.8rem;
+            color: var(--sw-yellow);
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #444;
+            padding-bottom: 0.5rem;
+        }
+
+        .char-details {
+            text-align: left;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .char-details strong {
+            color: var(--sw-yellow);
+            display: inline-block;
+            width: 110px;
+        }
+
+        /* --- Controls --- */
+        .controls {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        button {
+            background-color: transparent;
+            color: var(--sw-yellow);
+            border: 2px solid var(--sw-yellow);
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        button:hover {
+            background-color: var(--sw-yellow);
+            color: var(--sw-black);
+            box-shadow: 0 0 15px rgba(255, 232, 31, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #666;
+            color: #666;
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        /* --- Loading State --- */
+        .loading-container {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: var(--text-light);
+        }
+
+        .spinner {
+            font-size: 3rem;
+            color: var(--sw-yellow);
+            margin-bottom: 1rem;
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        /* --- Error State --- */
+        .error-container {
+            display: none; /* Hidden by default */
+            background-color: #3e1a1a;
+            border: 1px solid #ff4444;
+            color: #ffcccc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .error-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #ff4444;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fa-solid fa-jedi"></i> Star Wars API</h1>
+        <p class="subtitle">Discover characters from a galaxy far, far away...</p>
+    </header>
+
+    <main>
+        <!-- Character Display Section -->
+        <article id="characterCard" class="character-card">
+            <div class="character-image">
+                <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+            <h2 id="charName" class="char-name">Luke Skywalker</h2>
+            
+            <div class="char-details">
+                <p><strong>Height:</strong> <span id="charHeight">172</span> cm</p>
+                <p><strong>Gender:</strong> <span id="charGender">Male</span></p>
+                <p><strong>Birth Year:</strong> <span id="charBirthYear">19BBY</span></p>
+                <p><strong>Home World:</strong> <span id="charHomeWorld">Tatooine</span></p>
+            </div>
+        </article>
+
+        <!-- Loading Section -->
+        <div id="loadingSection" class="loading-container">
+            <i class="fa-solid fa-circle-notch spinner"></i>
+            <p class="loading-text">Loading data from the holocron...</p>
+        </div>
+
+        <!-- Error Section -->
+        <div id="errorSection" class="error-container">
+            <i class="fa-solid fa-triangle-exclamation error-icon"></i>
+            <p>Oh no! That person isn't available.</p>
+            <p>Please try again.</p>
+        </div>
+
+        <!-- Controls -->
+        <section class="controls">
+            <button id="getCharBtn">Get Random Character</button>
+        </section>
+    </main>
+
+    <script>
+        /**
+         * Star Wars Web App Logic
+         * Uses Fetch API (AJAX) to communicate with SWAPI.tech
+         */
+
+        // 1. Retrieve elements from the DOM
+        const getCharBtn = document.getElementById('getCharBtn');
+        const characterCard = document.getElementById('characterCard');
+        const loadingSection = document.getElementById('loadingSection');
+        const errorSection = document.getElementById('errorSection');
+
+        // Data fields
+        const charNameEl = document.getElementById('charName');
+        const charHeightEl = document.getElementById('charHeight');
+        const charGenderEl = document.getElementById('charGender');
+        const charBirthYearEl = document.getElementById('charBirthYear');
+        const charHomeWorldEl = document.getElementById('charHomeWorld');
+
+        // UI State Helpers
+        function showLoading() {
+            characterCard.style.display = 'none';
+            errorSection.style.display = 'none';
+            loadingSection.style.display = 'flex';
+            getCharBtn.disabled = true; // Prevent double clicks
+        }
+
+        function showError() {
+            characterCard.style.display = 'none';
+            loadingSection.style.display = 'none';
+            errorSection.style.display = 'block';
+            getCharBtn.disabled = false;
+        }
+
+        function showCharacter() {
+            loadingSection.style.display = 'none';
+            errorSection.style.display = 'none';
+            characterCard.style.display = 'block';
+            getCharBtn.disabled = false;
+        }
+
+        /**
+         * Helper function to fetch Homeworld name separately
+         * because the character API only returns a URL for homeworld
+         */
+        async function fetchHomeworldName(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Homeworld not found');
+                const data = await response.json();
+                return data.result.properties.name;
+            } catch (error) {
+                console.error("Error fetching homeworld:", error);
+                return "Unknown";
+            }
+        }
+
+        /**
+         * Main function to get data from API
+         */
+        async function getRandomCharacter() {
+            showLoading();
+
+            // Generate a random ID between 1 and 83
+            const randomId = Math.floor(Math.random() * 83) + 1;
+            const apiUrl = `https://www.swapi.tech/api/people/${randomId}`;
+
+            try {
+                // AJAX Request 1: Get Character Data
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                
+                // SWAPI structure is usually { result: { properties: { ... } } }
+                const properties = data.result.properties;
+
+                // AJAX Request 2: Get Homeworld Data (Nested fetch)
+                // We wait for this specific detail before displaying
+                const homeWorldName = await fetchHomeworldName(properties.homeworld);
+
+                // Update DOM
+                charNameEl.textContent = properties.name;
+                charHeightEl.textContent = properties.height;
+                charGenderEl.textContent = properties.gender;
+                charBirthYearEl.textContent = properties.birth_year;
+                charHomeWorldEl.textContent = homeWorldName;
+
+                showCharacter();
+
+            } catch (error) {
+                console.error('Error fetching character:', error);
+                showError();
+            }
+        }
+
+        // 2. Add Event Listener
+        getCharBtn.addEventListener('click', getRandomCharacter);
+
+    </script>
+</body>
+</html>
