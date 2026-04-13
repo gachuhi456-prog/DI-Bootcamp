@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunrise Comparator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+        h2 { text-align: center; color: #333; }
+        .city-group {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover { background-color: #0056b3; }
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Sunrise Times</h2>
+    <form id="sunriseForm">
+        
+        <!-- City 1 Inputs -->
+        <div class="city-group">
+            <h3>City 1</h3>
+            <label>Latitude:</label>
+            <input type="text" id="lat1" value="48.864716" required>
+            
+            <label>Longitude:</label>
+            <input type="text" id="lng1" value="2.349014" required>
+        </div>
+
+        <!-- City 2 Inputs -->
+        <div class="city-group">
+            <h3>City 2</h3>
+            <label>Latitude:</label>
+            <input type="text" id="lat2" value="40.730610" required>
+            
+            <label>Longitude:</label>
+            <input type="text" id="lng2" value="-73.935242" required>
+        </div>
+
+        <button type="submit">Get Sunrise Times</button>
+    </form>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    document.getElementById('sunriseForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent page reload
+
+        // 1. Retrieve input values
+        const lat1 = document.getElementById('lat1').value;
+        const lng1 = document.getElementById('lng1').value;
+        const lat2 = document.getElementById('lat2').value;
+        const lng2 = document.getElementById('lng2').value;
+
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = "Loading...";
+
+        // 2. Create the two API URLs
+        const url1 = `https://api.sunrise-sunset.org/json?lat=${lat1}&lng=${lng1}`;
+        const url2 = `https://api.sunrise-sunset.org/json?lat=${lat2}&lng=${lng2}`;
+
+        // 3. Use Promise.all() to fetch both
+        // We map the URLs to fetch promises.
+        Promise.all([
+            fetch(url1).then(response => {
+                if (!response.ok) throw new Error('City 1 not found');
+                return response.json();
+            }),
+            fetch(url2).then(response => {
+                if (!response.ok) throw new Error('City 2 not found');
+                return response.json();
+            })
+        ])
+        .then(data => {
+            // data is an array containing the results of both fetches [data1, data2]
+            const sunrise1 = data[0].results.sunrise;
+            const sunrise2 = data[1].results.sunrise;
+
+            // Display results ONLY when both are resolved
+            resultDiv.innerHTML = `
+                <p>City 1 Sunrise: ${sunrise1} UTC</p>
+                <p>City 2 Sunrise: ${sunrise2} UTC</p>
+            `;
+            resultDiv.className = ""; // Remove error class if it existed
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            resultDiv.innerHTML = "Error retrieving data. Please check coordinates.";
+            resultDiv.className = "error";
+        });
+    });
+</script>
+
+</body>
+</html>

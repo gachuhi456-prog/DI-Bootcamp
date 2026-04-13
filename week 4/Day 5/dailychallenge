@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Async/Await & API Exercises</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 30px; color: #333;}
+        
+        /* Exercise 1 Styles */
+        .controls { margin-bottom: 20px; display: flex; gap: 10px; }
+        input { padding: 10px; flex-grow: 1; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; color: white; font-weight: bold;}
+        .btn-search { background-color: #007bff; }
+        .btn-delete { background-color: #dc3545; }
+        #gif-section { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        #gif-section img { width: 100%; border-radius: 8px; height: 150px; object-fit: cover; }
+
+        /* Analysis Console Styles */
+        .console-log {
+            background-color: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 14px;
+        }
+        .analysis-text { color: #555; font-style: italic; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Exercises 1-4 Solutions</h1>
+
+    <!-- ========================================== -->
+    <!-- 🌟 Exercise 1 : Giphy API #3 -->
+    <!-- ========================================== -->
+    <h2>Exercise 1: Giphy Search</h2>
+    <div class="controls">
+        <input type="text" id="categoryInput" placeholder="Enter a category (e.g. funny, cats)...">
+        <button id="searchBtn" class="btn-search">Search</button>
+        <button id="deleteBtn" class="btn-delete">Delete All</button>
+    </div>
+    <div id="gif-section"></div>
+
+    <!-- ========================================== -->
+    <!-- 🌟 Exercise 2, 3, 4 : Analysis -->
+    <!-- ========================================== -->
+    
+    <h2>Exercise 2: Analyze #4 (Promise.all)</h2>
+    <div id="console-ex2" class="console-log"></div>
+    <p class="analysis-text">Check the log above. The code waits for the slowest promise (2s) before printing the result array ["slow", "fast"].</p>
+
+    <h2>Exercise 3: Analyze #5 (Async/Await with Promise.all)</h2>
+    <div id="console-ex3" class="console-log"></div>
+    <p class="analysis-text">Check the log above. Here, the console.log is INSIDE the async function. So "fast" prints immediately after 1s, and "slow" prints after 2s.</p>
+
+    <h2>Exercise 4: Analyze #6 (Parallel with .then)</h2>
+    <div id="console-ex4" class="console-log"></div>
+    <p class="analysis-text">Check the log above. No await or all. Both run freely. "fast" logs at 1s, "slow" logs at 2s.</p>
+
+</div>
+
+<script>
+    // Helper to visualize logs on the HTML page
+    function logTo(elementId, text) {
+        const el = document.getElementById(elementId);
+        const line = document.createElement('div');
+        line.textContent = `> ${text}`;
+        el.appendChild(line);
+        console.log(`[${elementId}] ${text}`);
+    }
+
+    // ==========================================
+    // Exercise 1 : Giphy API #3
+    // ==========================================
+    
+    const searchBtn = document.getElementById('searchBtn');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const input = document.getElementById('categoryInput');
+    const gifSection = document.getElementById('gif-section');
+    const apiKey = "hpvZycW22qCjn5cRM1xtWB8NKq4dQ2My";
+
+    searchBtn.addEventListener('click', async () => {
+        const category = input.value.trim();
+        if (!category) return alert("Please enter a category");
+
+        // Fetch the gifs
+        const url = `https://api.giphy.com/v1/gifs/search?q=${category}&rating=g&api_key=${apiKey}&limit=10`;
+
+        try {
+            const response = await fetch(url);
+            
+            // Check status
+            if (!response.ok) {
+                throw new Error(`Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Append relevant gifs
+            data.data.forEach(gif => {
+                const img = document.createElement('img');
+                // Hint: Look for the sub-object named "images"
+                img.src = gif.images.original.url;
+                img.alt = gif.title;
+                gifSection.appendChild(img);
+            });
+
+        } catch (error) {
+            console.error("Error fetching GIFs:", error);
+            alert("Could not fetch GIFs. See console for details.");
+        }
+    });
+
+    // Allow user to remove all GIFs
+    deleteBtn.addEventListener('click', () => {
+        gifSection.innerHTML = '';
+    });
+
+
+    // ==========================================
+    // Exercise 2 : Analyze #4
+    // ==========================================
+
+    let resolveAfter2Seconds = function () {
+        logTo('console-ex2', "starting slow promise");
+        return new Promise(resolve => {
+            setTimeout(function () {
+                resolve("slow");
+                logTo('console-ex2', "slow promise is done");
+            }, 2000);
+        });
+    };
+
+    let resolveAfter1Second = function () {
+        logTo('console-ex2', "starting fast promise");
+        return new Promise(resolve => {
+            setTimeout(function () {
+                resolve("fast");
+                logTo('console-ex2', "fast promise is done");
+            }, 1000);
+        });
+    };
+
+    let concurrentPromise = function () {
+        logTo('console-ex2', '==CONCURRENT START with Promise.all==');
+        return Promise.all([resolveAfter2Seconds(), resolveAfter1Second()]).then((messages) => {
+            logTo('console-ex2', messages[0]); // "slow"
+            logTo('console-ex2', messages[1]); // "fast"
+        });
+    }
+
+    // Starts after 1 second
+    setTimeout(concurrentPromise, 1000);
+
+
+    // ==========================================
+    // Exercise 3 : Analyze #5
+    // ==========================================
+
+    // Re-defining for scope isolation in this specific block logic simulation
+    let resolveAfter2Seconds_3 = function () {
+        logTo('console-ex3', "starting slow promise");
+        return new Promise(resolve => {
+            setTimeout(function () {
+                resolve("slow");
+                logTo('console-ex3', "slow promise is done");
+            }, 2000);
+        });
+    };
+
+    let resolveAfter1Second_3 = function () {
+        logTo('console-ex3', "starting fast promise");
+        return new Promise(resolve => {
+            setTimeout(function () {
+                resolve("fast");
+                logTo('console-ex3', "fast promise is done");
+            }, 1000);
+        });
+    };
+
+    let parallel = async function () {
+        logTo('console-ex3', '==PARALLEL with await Promise.all==');
+        
+        await Promise.all([
+            (async () => logTo('console-ex3', await resolveAfter2Seconds_3()))(),
+            (async () => logTo('console-ex3', await resolveAfter1Second_3()))()
+        ]);
+    }
+
+    // Starts after 5 seconds
+    setTimeout(parallel, 5000);
+
+
+    // ==========================================
+    // Exercise 4 : Analyze #6
+    // ==========================================
+
+    let resolveAfter2Seconds_4 = function () {
+        logTo('console-ex4', "starting slow promise");
+        return new Promise(resolve => {
+            setTimeout(function () {
+                resolve("slow");
+                logTo('console-ex4', "slow promise is done");
+            }, 2000);
+        });
+    };
+
+    let resolveAfter1Second_4 = function () {
+        logTo('console-ex4', "starting fast promise");
+        return new Promise(resolve => {
+            setTimeout(function () {
+                resolve("fast");
+                logTo('console-ex4', "fast promise is done");
+            }, 1000);
+        });
+    };
+
+    let parallelPromise = function () {
+        logTo('console-ex4', '==PARALLEL with Promise.then==');
+        
+        // These fire and forget. They run independently.
+        resolveAfter2Seconds_4().then((message) => logTo('console-ex4', message));
+        resolveAfter1Second_4().then((message) => logTo('console-ex4', message));
+    }
+
+    // Starts after 13 seconds
+    setTimeout(parallelPromise, 13000);
+
+</script>
+
+</body>
+</html>

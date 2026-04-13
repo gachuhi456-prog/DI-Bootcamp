@@ -1,0 +1,60 @@
+/**
+ * Returns true if all parameters are truthy, false otherwise
+ * @param {...any} args - Any number of arguments to check
+ * @returns {boolean} - True if all are truthy, false otherwise
+ */
+function allTruthy(...args) {
+    // Check if every argument is truthy
+    return args.every(arg => Boolean(arg));
+}
+
+// Alternative shorter version:
+// const allTruthy = (...args) => args.every(Boolean);
+
+// ==========================================
+// TEST CASES
+// ==========================================
+
+console.log("=== Testing allTruthy function ===\n");
+
+// Test 1: All true booleans
+console.log("allTruthy(true, true, true):");
+console.log(allTruthy(true, true, true)); // ➞ true
+
+// Test 2: One false boolean
+console.log("\nallTruthy(true, false, true):");
+console.log(allTruthy(true, false, true)); // ➞ false
+
+// Test 3: Numbers including 0 (falsy)
+console.log("\nallTruthy(5, 4, 3, 2, 1, 0):");
+console.log(allTruthy(5, 4, 3, 2, 1, 0)); // ➞ false
+
+// ==========================================
+// ADDITIONAL TEST CASES
+// ==========================================
+
+console.log("\n=== Additional Tests ===\n");
+
+// All truthy numbers
+console.log("allTruthy(1, 2, 3):", allTruthy(1, 2, 3)); // ➞ true
+
+// Empty string (falsy)
+console.log("allTruthy('hello', ''):", allTruthy('hello', '')); // ➞ false
+
+// Null (falsy)
+console.log("allTruthy('hello', null):", allTruthy('hello', null)); // ➞ false
+
+// Undefined (falsy)
+console.log("allTruthy('hello', undefined):", allTruthy('hello', undefined)); // ➞ false
+
+// NaN (falsy)
+console.log("allTruthy(1, NaN):", allTruthy(1, NaN)); // ➞ false
+
+// All truthy strings
+console.log("allTruthy('a', 'b', 'c'):", allTruthy('a', 'b', 'c')); // ➞ true
+
+// No arguments
+console.log("allTruthy():", allTruthy()); // ➞ true (empty array returns true for .every())
+
+// Mixed truthy values
+console.log("allTruthy(1, 'hello', true, [], {}):", allTruthy(1, 'hello', true, [], {})); // ➞ true
