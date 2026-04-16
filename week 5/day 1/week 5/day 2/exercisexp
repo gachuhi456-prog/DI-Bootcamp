@@ -1,0 +1,163 @@
+// ==========================================
+// 🌟 Exercise 1: Hello, World! Program
+// ==========================================
+console.log("--- Exercise 1: Hello, World! ---");
+console.log("Hello, World!");
+
+
+// ==========================================
+// 🌟 Exercise 2: Type Annotations
+// ==========================================
+console.log("\n--- Exercise 2: Type Annotations ---");
+
+let age: number = 30;
+let name: string = "John Doe";
+
+console.log(`Name: ${name}, Age: ${age}`);
+
+
+// ==========================================
+// 🌟 Exercise 3: Union Types
+// ==========================================
+console.log("\n--- Exercise 3: Union Types ---");
+
+// Variable id can be either a string or a number
+let id: string | number;
+
+id = 101; // Valid as number
+console.log("ID as number:", id);
+
+id = "A-101"; // Valid as string
+console.log("ID as string:", id);
+
+
+// ==========================================
+// 🌟 Exercise 4: Control Flow with if...else
+// ==========================================
+console.log("\n--- Exercise 4: Control Flow ---");
+
+function checkNumberType(num: number): string {
+    if (num > 0) {
+        return "Positive";
+    } else if (num < 0) {
+        return "Negative";
+    } else {
+        return "Zero";
+    }
+}
+
+console.log("Input: 10 ->", checkNumberType(10));
+console.log("Input: -5 ->", checkNumberType(-5));
+console.log("Input: 0 ->", checkNumberType(0));
+
+
+// ==========================================
+// 🌟 Exercise 5: Tuple Types
+// ==========================================
+console.log("\n--- Exercise 5: Tuple Types ---");
+
+function getDetails(name: string, age: number): [string, number, string] {
+    const greeting: string = `Hello, ${name}! You are ${age} years old.`;
+    return [name, age, greeting];
+}
+
+const details = getDetails("Alice", 25);
+console.log(details); // Output: ['Alice', 25, 'Hello, Alice! You are 25 years old.']
+
+
+// ==========================================
+// 🌟 Exercise 6: Object Type Annotations
+// ==========================================
+console.log("\n--- Exercise 6: Object Types ---");
+
+// 1. Define the Object Structure
+type Person = {
+    name: string;
+    age: number;
+};
+
+// 2. Create the Function
+function createPerson(name: string, age: number): Person {
+    return { name, age };
+}
+
+// 3. Test the Function
+const person1 = createPerson("Bob", 40);
+console.log(person1);
+
+
+// ==========================================
+// 🌟 Exercise 7: Type Assertions
+// ==========================================
+console.log("\n--- Exercise 7: Type Assertions ---");
+
+/*
+ * NOTE: This exercise requires a DOM environment (like a web browser).
+ * Since VS Code runs TypeScript in Node.js, 'document' is not defined.
+ * The code below checks if 'document' exists to prevent crashes.
+ */
+
+if (typeof document !== 'undefined') {
+    // Get an Element from the DOM
+    const inputElement = document.getElementById("myInput") as HTMLInputElement;
+
+    // Access the Element’s Properties
+    if (inputElement) {
+        inputElement.value = "Hello from TypeScript!";
+        console.log("Input value set to:", inputElement.value);
+    } else {
+        console.log("Element with ID 'myInput' not found.");
+    }
+} else {
+    console.log("Skipped Exercise 7 execution: DOM (document) is not available in Node.js environment.");
+}
+
+
+// ==========================================
+// 🌟 Exercise 8: switch Statement
+// ==========================================
+console.log("\n--- Exercise 8: Switch Statement ---");
+
+function getAction(role: string): string {
+    switch (role) {
+        case "admin":
+            return "Manage users and settings";
+        case "editor":
+            return "Edit content";
+        case "viewer":
+            return "View content";
+        case "guest":
+            return "Limited access";
+        default:
+            return "Invalid role";
+    }
+}
+
+// Testing the function
+console.log("Role 'admin':", getAction("admin"));
+console.log("Role 'editor':", getAction("editor"));
+console.log("Role 'viewer':", getAction("viewer"));
+console.log("Role 'guest':", getAction("guest"));
+console.log("Role 'unknown':", getAction("unknown"));
+
+
+// ==========================================
+// 🌟 Exercise 9: Function Overloading
+// ==========================================
+console.log("\n--- Exercise 9: Function Overloading ---");
+
+// 1. Define Overload Signatures
+function greet(): string;
+function greet(name: string): string;
+
+// 2. Implementation
+function greet(name?: string): string {
+    if (name) {
+        return `Hello, ${name}!`;
+    }
+    return "Hello, there!";
+}
+
+// Testing the overloaded function
+console.log(greet("Alice")); // Output: Hello, Alice!
+console.log(greet());        // Output: Hello, there!

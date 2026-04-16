@@ -1,0 +1,112 @@
+class Employee {
+  // Properties are defined directly in the constructor for shorthand
+  constructor(
+    private name: string,
+    private salary: number,
+    public position: string,
+    protected department: string
+  ) {}
+
+  public getEmployeeInfo(): string {
+    // We can access private and protected properties here
+    return `Name: ${this.name}, Position: ${this.position}`;
+  }
+}
+
+// Usage
+const emp = new Employee("Alice Smith", 60000, "Developer", "IT");
+console.log(emp.getEmployeeInfo()); // Output: Name: Alice Smith, Position: Developer
+
+// Note: Trying to access emp.name or emp.salary outside the class would cause an error.
+// Note: Trying to access emp.department outside the class or its subclasses would cause an error.
+
+class Product {
+  constructor(
+    public readonly id: number,
+    public name: string,
+    public price: number
+  ) {}
+
+  public getProductInfo(): string {
+    return `Product: ${this.name}, Price: $${this.price}`;
+  }
+}
+
+const product = new Product(101, "Laptop", 999.99);
+console.log(product.getProductInfo()); // Output: Product: Laptop, Price: $999.99
+
+console.log(`Initial ID: ${product.id}`);
+
+// Attempting to modify the readonly property
+// product.id = 102; // Error: Cannot assign to 'id' because it is a read-only property.
+
+class Product {
+  constructor(
+    public readonly id: number,
+    public name: string,
+    public price: number
+  ) {}
+
+  public getProductInfo(): string {
+    return `Product: ${this.name}, Price: $${this.price}`;
+  }
+}
+
+const product = new Product(101, "Laptop", 999.99);
+console.log(product.getProductInfo()); // Output: Product: Laptop, Price: $999.99
+
+console.log(`Initial ID: ${product.id}`);
+
+// Attempting to modify the readonly property
+// product.id = 102; // Error: Cannot assign to 'id' because it is a read-only property.
+
+
+class Calculator {
+  // Static methods belong to the class itself, not instances
+  public static add(a: number, b: number): number {
+    return a + b;
+  }
+
+  public static subtract(a: number, b: number): number {
+    return a - b;
+  }
+}
+
+// Usage: Call methods directly on the class, no 'new' keyword needed
+console.log(`Sum: ${Calculator.add(10, 5)}`); // Output: Sum: 15
+console.log(`Difference: ${Calculator.subtract(10, 5)}`); // Output: Difference: 5
+
+
+interface User {
+  readonly id: number;
+  name: string;
+  email: string;
+}
+
+// PremiumUser extends User and adds an optional property
+interface PremiumUser extends User {
+  membershipLevel?: string; // '?' makes it optional
+}
+
+function printUserDetails(user: PremiumUser): void {
+  console.log(`ID: ${user.id}`);
+  console.log(`Name: ${user.name}`);
+  console.log(`Email: ${user.email}`);
+  console.log(`Membership: ${user.membershipLevel ?? "Standard"}`);
+}
+
+// Usage
+const premiumUser: PremiumUser = {
+  id: 5566,
+  name: "John Doe",
+  email: "john.doe@example.com",
+  membershipLevel: "Gold"
+};
+
+printUserDetails(premiumUser);
+/* Output:
+ID: 5566
+Name: John Doe
+Email: john.doe@example.com
+Membership: Gold
+*/

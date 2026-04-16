@@ -1,0 +1,192 @@
+// Interface Book definition
+interface Book {
+    title: string;
+    author: string;
+    isbn: string;
+    publishedYear: number;
+    genre?: string; // Optional property
+}
+
+// Base Library class
+class Library {
+    private books: Book[] = [];
+
+    // Add a new book to the library
+    public addBook(book: Book): void {
+        // Check if book with same ISBN already exists
+        const existingBook = this.books.find(b => b.isbn === book.isbn);
+        if (existingBook) {
+            console.log(`Book with ISBN ${book.isbn} already exists.`);
+            return;
+        }
+        this.books.push(book);
+        console.log(`Added: "${book.title}" by ${book.author}`);
+    }
+
+    // Get book details by ISBN
+    public getBookDetails(isbn: string): string {
+        const book = this.books.find(b => b.isbn === isbn);
+        
+        if (!book) {
+            return `Book with ISBN ${isbn} not found.`;
+        }
+
+        const genreInfo = book.genre ? `Genre: ${book.genre}` : "Genre: Not specified";
+        
+        return `
+Book Details:
+-------------
+Title: ${book.title}
+Author: ${book.author}
+ISBN: ${book.isbn}
+Published Year: ${book.publishedYear}
+${genreInfo}
+        `.trim();
+    }
+
+    // Protected method to access books array in derived classes
+    protected getAllBooks(): Book[] {
+        return [...this.books]; // Return copy to maintain encapsulation
+    }
+
+    // Protected method to get books count
+    protected getBooksCount(): number {
+        return this.books.length;
+    }
+}
+
+// DigitalLibrary extends Library
+class DigitalLibrary extends Library {
+    readonly website: string;
+
+    constructor(website: string) {
+        super();
+        this.website = website;
+    }
+
+    // List all book titles
+    public listBooks(): string[] {
+        const books = this.getAllBooks();
+        return books.map(book => book.title);
+    }
+
+    // Get library info including website
+    public getLibraryInfo(): string {
+        return `
+Digital Library Information:
+---------------------------
+Website: ${this.website}
+Total Books: ${this.getBooksCount()}
+        `.trim();
+    }
+
+    // Override getBookDetails to include website info
+    public getBookDetails(isbn: string): string {
+        const baseDetails = super.getBookDetails(isbn);
+        if (baseDetails.includes("not found")) {
+            return baseDetails;
+        }
+        return `${baseDetails}\nLibrary Website: ${this.website}`;
+    }
+
+    // Print formatted catalog
+    public printCatalog(): void {
+        const books = this.getAllBooks();
+        console.log("\n=== DIGITAL LIBRARY CATALOG ===");
+        console.log(`Website: ${this.website}`);
+        console.log("--------------------------------");
+        
+        if (books.length === 0) {
+            console.log("No books in library.");
+            return;
+        }
+
+        books.forEach((book, index) => {
+            console.log(`${index + 1}. ${book.title} (${book.publishedYear})`);
+        });
+        
+        console.log(`--------------------------------\nTotal: ${books.length} books\n`);
+    }
+}
+
+// ============== TESTING ==============
+
+// Create instance of DigitalLibrary
+const myDigitalLibrary = new DigitalLibrary("https://books.digitallibrary.org");
+
+console.log(myDigitalLibrary.getLibraryInfo());
+console.log("");
+
+// Add books to the library
+const book1: Book = {
+    title: "The Great Gatsby",
+    author: "F. Scott Fitzgerald",
+    isbn: "978-0743273565",
+    publishedYear: 1925,
+    genre: "Classic Fiction"
+};
+
+const book2: Book = {
+    title: "1984",
+    author: "George Orwell",
+    isbn: "978-0451524935",
+    publishedYear: 1949,
+    genre: "Dystopian Fiction"
+};
+
+const book3: Book = {
+    title: "Clean Code",
+    author: "Robert C. Martin",
+    isbn: "978-0132350884",
+    publishedYear: 2008
+    // genre is optional, not provided
+};
+
+const book4: Book = {
+    title: "The Pragmatic Programmer",
+    author: "Andrew Hunt",
+    isbn: "978-0201616224",
+    publishedYear: 1999,
+    genre: "Technical"
+};
+
+// Add books
+myDigitalLibrary.addBook(book1);
+myDigitalLibrary.addBook(book2);
+myDigitalLibrary.addBook(book3);
+myDigitalLibrary.addBook(book4);
+
+console.log("");
+
+// Try to add duplicate (should show error)
+myDigitalLibrary.addBook(book1);
+
+console.log("\n" + "=".repeat(50) + "\n");
+
+// Print catalog
+myDigitalLibrary.printCatalog();
+
+// Get and print book details
+console.log("BOOK DETAILS:");
+console.log("=".repeat(50));
+console.log(myDigitalLibrary.getBookDetails("978-0743273565"));
+console.log("");
+console.log(myDigitalLibrary.getBookDetails("978-0132350884"));
+console.log("");
+
+// Try to get non-existent book
+console.log(myDigitalLibrary.getBookDetails("999-0000000000"));
+console.log("");
+
+// List all book titles
+console.log("ALL BOOK TITLES:");
+console.log("=".repeat(50));
+const titles = myDigitalLibrary.listBooks();
+titles.forEach((title, index) => {
+    console.log(`${index + 1}. ${title}`);
+});
+
+// Verify readonly property
+console.log("\n" + "=".repeat(50));
+console.log(`Website (readonly): ${myDigitalLibrary.website}`);
+// myDigitalLibrary.website = "https://newsite.com"; // Error: Cannot assign to 'website' because it is a read-only property
