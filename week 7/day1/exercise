@@ -1,0 +1,196 @@
+
+
+const express = require('express');
+const router = express.Router();
+
+// Define the home page route
+router.get('/', (req, res) => {
+    res.send('Welcome to the Homepage!');
+});
+
+// Define the about route
+router.get('/about', (req, res) => {
+    res.send('This is the About Us page.');
+});
+
+module.exports = router;
+
+const express = require('express');
+const app = express();
+const routes = require('./routes/index');
+
+// Mount the router on the root path
+app.use('/', routes);
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+const express = require('express');
+const router = express.Router();
+
+// Sample in-memory database
+let todos = [];
+let currentId = 1;
+
+// Get all to-do items
+router.get('/', (req, res) => {
+    res.json(todos);
+});
+
+// Add a new to-do item
+router.post('/', (req, res) => {
+    const newTodo = {
+        id: currentId++,
+        task: req.body.task,
+        completed: req.body.completed || false
+    };
+    todos.push(newTodo);
+    res.status(201).json(newTodo);
+});
+
+// Update a to-do item by ID
+router.put('/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const todo = todos.find(t => t.id === id);
+
+    if (!todo) {
+        return res.status(404).json({ message: "To-do item not found" });
+    }
+
+    todo.task = req.body.task || todo.task;
+    todo.completed = req.body.completed !== undefined ? req.body.completed : todo.completed;
+
+    res.json(todo);
+});
+
+// Delete a to-do item by ID
+router.delete('/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = todos.findIndex(t => t.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({ message: "To-do item not found" });
+    }
+
+    todos.splice(index, 1);
+    res.status(204).send();
+});
+
+module.exports = router;
+
+const express = require('express');
+const app = express();
+const todosRouter = require('./routes/todos');
+
+// Middleware to parse JSON bodies (essential for POST/PUT)
+app.use(express.json());
+
+// Mount the router
+app.use('/todos', todosRouter);
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+const express = require('express');
+const app = express();
+const todosRouter = require('./routes/todos');
+
+// Middleware to parse JSON bodies (essential for POST/PUT)
+app.use(express.json());
+
+// Mount the router
+app.use('/todos', todosRouter);
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+const express = require('express');
+const router = express.Router();
+
+// Sample in-memory database
+let books = [];
+let currentId = 1;
+
+// Get all books
+router.get('/', (req, res) => {
+    res.json(books);
+});
+
+// Add a new book
+router.post('/', (req, res) => {
+    const newBook = {
+        id: currentId++,
+        title: req.body.title,
+        author: req.body.author,
+        year: req.body.year
+    };
+    books.push(newBook);
+    res.status(201).json(newBook);
+});
+
+// Update a book by ID
+router.put('/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const book = books.find(b => b.id === id);
+
+    if (!book) {
+        return res.status(404).json({ message: "Book not found" });
+    }
+
+    book.title = req.body.title || book.title;
+    book.author = req.body.author || book.author;
+    book.year = req.body.year || book.year;
+
+    res.json(book);
+});
+
+// Delete a book by ID
+router.delete('/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = books.findIndex(b => b.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({ message: "Book not found" });
+    }
+
+    books.splice(index, 1);
+    res.status(204).send();
+});
+
+module.exports = router;
+
+const express = require('express');
+const app = express();
+const booksRouter = require('./routes/books');
+
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// Mount the router
+app.use('/books', booksRouter);
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+const express = require('express');
+const app = express();
+const booksRouter = require('./routes/books');
+
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// Mount the router
+app.use('/books', booksRouter);
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
