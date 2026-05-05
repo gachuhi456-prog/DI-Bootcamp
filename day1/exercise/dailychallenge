@@ -1,0 +1,152 @@
+mkdir trivia-quiz
+cd trivia-quiz
+npm init -y
+npm install express
+
+const express = require('express');
+const quizRouter = require('./routes/quiz');
+
+const app = express();
+const PORT = 3000;
+
+// Middleware to parse form data (needed for the text input answers)
+app.use(express.urlencoded({ extended: true }));
+
+// Mount the router
+app.use('/quiz', quizRouter);
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Trivia Game running at http://localhost:${PORT}/quiz`);
+});
+
+const express = require('express');
+const router = express.Router();
+
+// 2. Trivia Quiz Model (Hard-coded questions)
+const triviaQuestions = [
+    {
+        question: "What is the capital of France?",
+        answer: "Paris",
+    },
+    {
+        question: "Which planet is known as the Red Planet?",
+        answer: "Mars",
+    },
+    {
+        question: "What is the largest mammal in the world?",
+        answer: "Blue whale",
+    },
+];
+
+// Game State Variables
+// Note: In a production app with many users, you would use Sessions.
+// For this exercise, we use simple global variables.
+let currentQuestionIndex = 0;
+let score = 0;
+
+// 3. GET /quiz: Start the quiz and display the current question
+router.get('/', (req, res) => {
+    // Check if the quiz is finished
+    if (currentQuestionIndex >= triviaQuestions.length) {
+        return res.redirect('/quiz/score');
+    }
+
+    const q = triviaQuestions[currentQuestionIndex];
+
+    // Send HTML with a form to submit the answer
+    const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Trivia Quiz</title>
+            <style>
+                body { font-family: sans-serif; max-width: 600px; margin: 50px auto; text-align: center; }
+                input { padding: 10px; font-size: 16px; }
+                button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+                .score-box { background: #f0f0f0; padding: 10px; display: inline-block; margin-bottom: 20px;}
+            </style>
+        </head>
+        <body>
+            <h1>Trivia Quiz</h1>
+            <div class="score-box">Current Score: ${score}</div>
+            <h2>Question ${currentQuestionIndex + 1}/${triviaQuestions.length}</h2>
+            <p style="font-size: 20px;"><strong>${q.question}</strong></p>
+            
+            <form action="/quiz" method="POST">
+                <input type="text" name="userAnswer" placeholder="Type your answer here" required autocomplete="off">
+                <br><br>
+                <button type="submit">Submit Answer</button>
+            </form>
+            
+            <br>
+            <a href="/quiz/reset">Restart Game</a>
+        </body>
+        </html>
+    `;
+    res.send(html);
+});
+
+// 3. POST /quiz: Submit answer, check logic, update score
+router.post('/', (req, res) => {
+    const userAnswer = req.body.userAnswer;
+    const currentQ = triviaQuestions[currentQuestionIndex];
+    
+    // 5. Provide feedback logic
+    let isCorrect = false;
+    // Clean inputs: trim whitespace and ignore case (e.g., "paris" == "Paris")
+    if (userAnswer && userAnswer.trim().toLowerCase() === currentQ.answer.toLowerCase()) {
+        score++;
+        isCorrect = true;
+    }
+
+    // 6. Move to next question
+    currentQuestionIndex++;
+
+    // Display Result Page
+    const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Result</title>
+            <style>body { font-family: sans-serif; text-align: center; margin-top: 50px; }</style>
+        </head>
+        <body>
+            <h1 style="color: ${isCorrect ? 'green' : 'red'}">
+                ${isCorrect ? 'Correct! 🎉' : 'Incorrect! 😢'}
+            </h1>
+            <p>The correct answer was: <strong>${currentQ.answer}</strong></p>
+            <a href="/quiz">Next Question ➔</a>
+        </body>
+        </html>
+    `;
+    res.send(html);
+});
+
+// 3. GET /quiz/score: Display final score
+router.get('/score', (req, res) => {
+    const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Final Score</title>
+            <style>body { font-family: sans-serif; text-align: center; margin-top: 50px; }</style>
+        </head>
+        <body>
+            <h1>Quiz Completed!</h1>
+            <h2>Your Final Score: ${score} / ${triviaQuestions.length}</h2>
+            <a href="/quiz/reset">Play Again 🔄</a>
+        </body>
+        </html>
+    `;
+    res.send(html);
+});
+
+// Helper Route: Reset the game
+router.get('/reset', (req, res) => {
+    currentQuestionIndex = 0;
+    score = 0;
+    res.redirect('/quiz');
+});
+
+module.exports = router;
