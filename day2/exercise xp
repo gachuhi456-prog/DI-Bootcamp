@@ -1,0 +1,98 @@
+const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+// Dummy database (books table)
+let books = [
+  { id: 1, title: "Book One", author: "Author A", publishedYear: 2001 },
+  { id: 2, title: "Book Two", author: "Author B", publishedYear: 2005 }
+];
+
+// GET all books
+app.get("/api/books", (req, res) => {
+  res.status(200).json(books);
+});
+
+// GET book by ID
+app.get("/api/books/:bookId", (req, res) => {
+  const bookId = parseInt(req.params.bookId);
+  const book = books.find(b => b.id === bookId);
+
+  if (!book) {
+    return res.status(404).json({ message: "Book not found" });
+  }
+
+  res.status(200).json(book);
+});
+
+// CREATE book
+app.post("/api/books", (req, res) => {
+  const { title, author, publishedYear } = req.body;
+
+  if (!title || !author || !publishedYear) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const newBook = {
+    id: books.length + 1,
+    title,
+    author,
+    publishedYear
+  };
+
+  books.push(newBook);
+
+  res.status(201).json(newBook);
+});
+
+// UPDATE book
+app.put("/api/books/:bookId", (req, res) => {
+  const bookId = parseInt(req.params.bookId);
+  const book = books.find(b => b.id === bookId);
+
+  if (!book) {
+    return res.status(404).json({ message: "Book not found" });
+  }
+
+  const { title, author, publishedYear } = req.body;
+
+  book.title = title || book.title;
+  book.author = author || book.author;
+  book.publishedYear = publishedYear || book.publishedYear;
+
+  res.status(200).json(book);
+});
+
+// DELETE book
+app.delete("/api/books/:bookId", (req, res) => {
+  const bookId = parseInt(req.params.bookId);
+  const index = books.findIndex(b => b.id === bookId);
+
+  if (index === -1) {
+    return res.status(404).json({ message: "Book not found" });
+  }
+
+  const deleted = books.splice(index, 1);
+
+  res.status(200).json({ message: "Book deleted", book: deleted });
+});
+
+// 404 handler (invalid routes)
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// Server error handler
+app.use((err, req, res, next) => {
+  console.error(err.message);
+  res.status(500).json({ message: "Server error" });
+});
+
+// Start server
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+node app.js
+GET http://localhost:5000/api/books
