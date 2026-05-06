@@ -1,0 +1,250 @@
+mkdir server
+cd server
+npm init -y
+
+npm install express pg bcrypt dotenv
+npm install nodemon --save-dev
+
+server/
+│── config/
+│     └── db.js
+│
+│── controllers/
+│     └── userController.js
+│
+│── models/
+│     └── userModel.js
+│
+│── routes/
+│     └── userRoutes.js
+│
+│── server.js
+│── .env
+
+CREATE DATABASE userdb;
+
+\c userdb;
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(100),
+    username VARCHAR(100) UNIQUE,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100)
+);
+
+CREATE TABLE hashpwd (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(100) UNIQUE,
+    password TEXT
+);
+
+PORT=3000
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=userdb
+
+const { Pool } = require("pg");
+require("dotenv").config();
+
+const pool = new Pool({
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_DATABASE
+});
+
+module.exports = pool;
+
+const pool = require("../config/db");
+
+// register user (transaction)
+const createUser = async (user, hashPassword) => {
+    const client = await pool.connect();
+
+    try {
+        await client.query("BEGIN");
+
+        const userResult = await client.query(
+            `INSERT INTO users (email, username, first_name, last_name)
+             VALUES ($1, $2, $3, $4)
+             RETURNING *`,
+            [user.email, user.username, user.first_name, user.last_name]
+        );
+
+        await client.query(
+            `INSERT INTO hashpwd (username, password)
+             VALUES ($1, $2)`,
+            [user.username, hashPassword]
+        );
+
+        await client.query("COMMIT");
+
+        return userResult.rows[0];
+    } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+    } finally {
+        client.release();
+    }
+};
+
+// get all users
+const getAllUsers = async () => {
+    const result = await pool.query("SELECT * FROM users");
+    return result.rows;
+};
+
+// get user by id
+const getUserById = async (id) => {
+    const result = await pool.query("SELECT * FROM users WHERE id=$1", [id]);
+    return result.rows[0];
+};
+
+// update user
+const updateUser = async (id, user) => {
+    const result = await pool.query(
+        `UPDATE users
+         SET email=$1, username=$2, first_name=$3, last_name=$4
+         WHERE id=$5 RETURNING *`,
+        [user.email, user.username, user.first_name, user.last_name, id]
+    );
+    return result.rows[0];
+};
+
+// get password hash
+const getPasswordByUsername = async (username) => {
+    const result = await pool.query(
+        "SELECT * FROM hashpwd WHERE username=$1",
+        [username]
+    );
+    return result.rows[0];
+};
+
+module.exports = {
+    createUser,
+    getAllUsers,
+    getUserById,
+    updateUser,
+    getPasswordByUsername
+};
+
+const bcrypt = require("bcrypt");
+const userModel = require("../models/userModel");
+
+// REGISTER
+const registerUser = async (req, res) => {
+    try {
+        const { email, username, first_name, last_name, password } = req.body;
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = await userModel.createUser(
+            { email, username, first_name, last_name },
+            hashedPassword
+        );
+
+        res.status(201).json({
+            message: "User registered successfully",
+            user
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// LOGIN
+const loginUser = async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        const userPwd = await userModel.getPasswordByUsername(username);
+
+        if (!userPwd) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(password, userPwd.password);
+
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        res.json({ message: "Login successful" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// GET ALL USERS
+const getUsers = async (req, res) => {
+    const users = await userModel.getAllUsers();
+    res.json(users);
+};
+
+// GET USER BY ID
+const getUserById = async (req, res) => {
+    const user = await userModel.getUserById(req.params.id);
+    res.json(user);
+};
+
+// UPDATE USER
+const updateUser = async (req, res) => {
+    const updated = await userModel.updateUser(req.params.id, req.body);
+    res.json(updated);
+};
+
+module.exports = {
+    registerUser,
+    loginUser,
+    getUsers,
+    getUserById,
+    updateUser
+};
+
+const express = require("express");
+const router = express.Router();
+
+const controller = require("../controllers/userController");
+
+router.post("/register", controller.registerUser);
+router.post("/login", controller.loginUser);
+
+router.get("/users", controller.getUsers);
+router.get("/users/:id", controller.getUserById);
+router.put("/users/:id", controller.updateUser);
+
+module.exports = router;
+
+const express = require("express");
+require("dotenv").config();
+
+const userRoutes = require("./routes/userRoutes");
+
+const app = express();
+
+app.use(express.json());
+
+// routes
+app.use("/api", userRoutes);
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
+npx nodemon server.js
+
+{
+  "email": "test@gmail.com",
+  "username": "alex",
+  "first_name": "Alex",
+  "last_name": "Gachuhi",
+  "password": "123456"
+}
+
+POST http://localhost:3000/api/login
