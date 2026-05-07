@@ -1,0 +1,174 @@
+project1/
+│── app.js
+│── routes/
+│     └── index.js
+
+npm init -y
+npm install express
+
+const express = require('express');
+const app = express();
+
+const indexRoutes = require('./routes/index');
+
+// Mount router
+app.use('/', indexRoutes);
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
+const express = require('express');
+const router = express.Router();
+
+// Homepage
+router.get('/', (req, res) => {
+  res.send('Welcome to the Homepage!');
+});
+
+// About page
+router.get('/about', (req, res) => {
+  res.send('About Us Page');
+});
+
+module.exports = router;
+
+npm init -y
+npm install express
+
+
+npm init -y
+npm install express
+
+npm init -y
+npm install express
+
+
+const express = require('express');
+const router = express.Router();
+
+let todos = [];
+let id = 1;
+
+// GET all todos
+router.get('/', (req, res) => {
+  res.json(todos);
+});
+
+// POST new todo
+router.post('/', (req, res) => {
+  const { task } = req.body;
+
+  const newTodo = {
+    id: id++,
+    task,
+  };
+
+  todos.push(newTodo);
+  res.status(201).json(newTodo);
+});
+
+// PUT update todo
+router.put('/:id', (req, res) => {
+  const todoId = parseInt(req.params.id);
+  const { task } = req.body;
+
+  const todo = todos.find(t => t.id === todoId);
+
+  if (!todo) {
+    return res.status(404).json({ message: 'Todo not found' });
+  }
+
+  todo.task = task;
+  res.json(todo);
+});
+
+// DELETE todo
+router.delete('/:id', (req, res) => {
+  const todoId = parseInt(req.params.id);
+
+  todos = todos.filter(t => t.id !== todoId);
+
+  res.json({ message: 'Todo deleted' });
+});
+
+module.exports = router;
+
+{ "task": "Study Express" }
+
+books-app/
+│── app.js
+│── routes/
+│     └── books.js
+
+const express = require('express');
+const app = express();
+
+const bookRoutes = require('./routes/books');
+
+app.use(express.json());
+
+// Mount router
+app.use('/books', bookRoutes);
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
+
+const express = require('express');
+const router = express.Router();
+
+let books = [];
+let id = 1;
+
+// GET all books
+router.get('/', (req, res) => {
+  res.json(books);
+});
+
+// POST new book
+router.post('/', (req, res) => {
+  const { title, author } = req.body;
+
+  const newBook = {
+    id: id++,
+    title,
+    author,
+  };
+
+  books.push(newBook);
+  res.status(201).json(newBook);
+});
+
+// PUT update book
+router.put('/:id', (req, res) => {
+  const bookId = parseInt(req.params.id);
+  const { title, author } = req.body;
+
+  const book = books.find(b => b.id === bookId);
+
+  if (!book) {
+    return res.status(404).json({ message: 'Book not found' });
+  }
+
+  book.title = title;
+  book.author = author;
+
+  res.json(book);
+});
+
+// DELETE book
+router.delete('/:id', (req, res) => {
+  const bookId = parseInt(req.params.id);
+
+  books = books.filter(b => b.id !== bookId);
+
+  res.json({ message: 'Book deleted' });
+});
+
+module.exports = router;
+
+node app.js
