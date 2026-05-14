@@ -1,0 +1,108 @@
+import axios from "axios";
+
+const API_KEY = "YOUR_API_KEY";
+
+export const getWeather = async (city) => {
+  const res = await axios.get(
+    `https://api.openweathermap.org/data/2.5/weather`,
+    {
+      params: {
+        q: city,
+        appid: API_KEY,
+        units: "metric",
+      },
+    }
+  );
+
+  return res.data;
+};
+
+export const loadFavorites = () => {
+  const data = localStorage.getItem("favorites");
+  return data ? JSON.parse(data) : [];
+};
+
+export const saveFavorites = (favorites) => {
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+};
+
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { loadFavorites, saveFavorites } from "../utils/localStorage";
+
+const FavoritesContext = createContext();
+
+export function FavoritesProvider({ children }) {
+  const [favorites, setFavorites] = useState([]);
+
+  useEffect(() => {
+    setFavorites(loadFavorites());
+  }, []);
+
+  useEffect(() => {
+    saveFavorites(favorites);
+  }, [favorites]);
+
+  const addFavorite = (city) => {
+    if (!favorites.includes(city)) {
+      setFavorites([...favorites, city]);
+    }
+  };
+
+  const removeFavorite = (city) => {
+    setFavorites(favorites.filter((c) => c !== city));
+  };
+
+  return (
+    <FavoritesContext.Provider
+      value={{ favorites, addFavorite, removeFavorite }}
+    >
+      {children}
+    </FavoritesContext.Provider>
+  );
+}
+
+export const useFavorites = () => useContext(FavoritesContext);
+
+import React from "react";
+import { AppBar, Toolbar, Button } from "@mui/material";
+import { Link } from "react-router-dom";
+
+export default function NavBar() {
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        <Button color="inherit" component={Link} to="/">
+          Weather
+        </Button>
+        <Button color="inherit" component={Link} to="/favorites">
+          Favorites
+        </Button>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
+import React, { useState } from "react";
+import { TextField, Button } from "@mui/material";
+
+export default function SearchBar({ onSearch }) {
+  const [city, setCity] = useState("");
+
+  return (
+    <div style={{ marginTop: 20 }}>
+      <TextField
+        label="Search city"
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
+      />
+      <Button
+        variant="contained"
+        onClick={() => onSearch(city)}
+        style={{ marginLeft: 10 }}
+      >
+        Search
+      </Button>
+    </div>
+  );
+}
+

@@ -1,0 +1,81 @@
+const quotes = [
+  { quote: "The best way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+  { quote: "Don’t let yesterday take up too much of today.", author: "Will Rogers" },
+  { quote: "It’s not whether you get knocked down, it’s whether you get up.", author: "Vince Lombardi" },
+  { quote: "If you are working on something exciting, it will keep you motivated.", author: "Steve Jobs" },
+  { quote: "Success is not in what you have, but who you are.", author: "Bo Bennett" },
+  { quote: "The harder you work for something, the greater you’ll feel when you achieve it.", author: "Unknown" },
+  { quote: "Dream bigger. Do bigger.", author: "Unknown" },
+  { quote: "Don’t stop when you’re tired. Stop when you’re done.", author: "Marilyn Monroe" }
+];
+
+export default quotes;
+
+import React, { useState } from "react";
+import quotesData from "./quotes";
+import "./App.css";
+
+function getRandomIndex(max) {
+  return Math.floor(Math.random() * max);
+}
+
+function getRandomColor() {
+  return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
+}
+
+export default function App() {
+  const [index, setIndex] = useState(getRandomIndex(quotesData.length));
+
+  const [colors, setColors] = useState({
+    bg: "#ffffff",
+    text: "#000000",
+    button: "#333333",
+  });
+
+  const generateQuote = () => {
+    let newIndex;
+
+    // prevent same quote twice
+    do {
+      newIndex = getRandomIndex(quotesData.length);
+    } while (newIndex === index && quotesData.length > 1);
+
+    setIndex(newIndex);
+
+    setColors({
+      bg: getRandomColor(),
+      text: getRandomColor(),
+      button: getRandomColor(),
+    });
+  };
+
+  const currentQuote = quotesData[index];
+
+  return (
+    <div
+      className="app"
+      style={{
+        backgroundColor: colors.bg,
+        color: colors.text,
+      }}
+    >
+      <div className="quote-box">
+        <h1 style={{ color: colors.text }}>
+          “{currentQuote.quote}”
+        </h1>
+
+        <p>- {currentQuote.author}</p>
+
+        <button
+          onClick={generateQuote}
+          style={{
+            backgroundColor: colors.button,
+            color: "#fff",
+          }}
+        >
+          New Quote
+        </button>
+      </div>
+    </div>
+  );
+}

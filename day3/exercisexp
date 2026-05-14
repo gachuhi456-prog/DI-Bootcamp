@@ -1,0 +1,73 @@
+ import React, { createContext, useState } from "react";
+
+export const ThemeContext = createContext();
+
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState("light");
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+import React, { useContext } from "react";
+import { ThemeContext } from "./ThemeContext";
+
+function ThemeSwitcher() {
+  const { toggleTheme } = useContext(ThemeContext);
+
+  return (
+    <button onClick={toggleTheme}>
+      Toggle Theme
+    </button>
+  );
+}
+
+export default ThemeSwitcher;
+
+import React, { useContext } from "react";
+import { ThemeContext } from "./ThemeContext";
+
+function Content() {
+  const { theme } = useContext(ThemeContext);
+
+  const styles = {
+    backgroundColor: theme === "light" ? "#fff" : "#222",
+    color: theme === "light" ? "#000" : "#fff",
+    padding: "40px",
+    minHeight: "100vh",
+    textAlign: "center"
+  };
+
+  return (
+    <div style={styles}>
+      <h1>{theme.toUpperCase()} MODE</h1>
+      <p>This is the theme switcher using useContext.</p>
+    </div>
+  );
+}
+
+export default Content;
+
+import React from "react";
+import { ThemeProvider } from "./ThemeContext";
+import ThemeSwitcher from "./ThemeSwitcher";
+import Content from "./Content";
+
+function App() {
+  return (
+    <ThemeProvider>
+      <ThemeSwitcher />
+      <Content />
+    </ThemeProvider>
+  );
+}
+
+export default App;
+

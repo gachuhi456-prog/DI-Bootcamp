@@ -1,69 +1,140 @@
-SELECT * 
-FROM items
-ORDER BY price ASC;
+// =============================
+// Exercise 1: Hello, World!
+// =============================
 
-SELECT * 
-FROM items
-WHERE price >= 80
-ORDER BY price DESC;
+console.log("Hello, World!");
 
-SELECT first_name, last_name
-FROM customers
-ORDER BY first_name ASC
-LIMIT 3;
 
-SELECT last_name
-FROM customers
-ORDER BY last_name DESC;
+// =============================
+// Exercise 2: Type Annotations
+// =============================
 
-SELECT * 
-FROM customer;
+let age: number = 25;
+let name1: string = "Alex";
 
-SELECT first_name || ' ' || last_name AS full_name
-FROM customer;
+console.log("Age:", age);
+console.log("Name:", name1);
 
-SELECT film_id, title, description, release_year, rental_rate
-FROM film
-ORDER BY rental_rate ASC;
 
-SELECT address, phone
-FROM address
-WHERE district = 'Texas';
+// =============================
+// Exercise 3: Union Types
+// =============================
 
-SELECT film_id, title, description, length, rental_rate
-FROM film
-WHERE title = 'Your Movie Name';
+let id: string | number;
 
-SELECT * 
-FROM film
-ORDER BY rental_rate ASC
-LIMIT 10;
+id = 101;
+console.log("ID as number:", id);
 
-SELECT * 
-FROM film
-ORDER BY rental_rate ASC
-OFFSET 10 LIMIT 10;
+id = "TS2026";
+console.log("ID as string:", id);
 
-SELECT c.first_name, c.last_name, p.amount, p.payment_date
-FROM customer c
-JOIN payment p 
-ON c.customer_id = p.customer_id
-ORDER BY c.customer_id ASC;
 
-SELECT f.title
-FROM film f
-LEFT JOIN inventory i 
-ON f.film_id = i.film_id
-WHERE i.inventory_id IS NULL;
+// =============================
+// Exercise 4: Control Flow with if...else
+// =============================
 
-SELECT city.city, country.country
-FROM city
-JOIN country 
-ON city.country_id = country.country_id;
+function checkNumber(num: number): string {
+    if (num > 0) {
+        return "Positive";
+    } else if (num < 0) {
+        return "Negative";
+    } else {
+        return "Zero";
+    }
+}
 
-SELECT c.customer_id, c.first_name, c.last_name, 
-       p.amount, p.payment_date, p.staff_id
-FROM customer c
-JOIN payment p 
-ON c.customer_id = p.customer_id
-ORDER BY p.staff_id ASC;
+console.log(checkNumber(10));
+console.log(checkNumber(-5));
+console.log(checkNumber(0));
+
+
+// =============================
+// Exercise 5: Tuple Types
+// =============================
+
+function getDetails(name: string, age: number): [string, number, string] {
+    return [name, age, `Hello, ${name}! You are ${age} years old.`];
+}
+
+const details = getDetails("Alice", 25);
+console.log(details);
+
+
+// =============================
+// Exercise 6: Object Type Annotations
+// =============================
+
+type Person = {
+    name: string;
+    age: number;
+};
+
+function createPerson(name: string, age: number): Person {
+    return {
+        name,
+        age
+    };
+}
+
+const person = createPerson("John", 30);
+console.log(person);
+
+
+// =============================
+// Exercise 7: Type Assertions
+// =============================
+
+// HTML example:
+// <input id="username" />
+
+const inputElement = document.getElementById("username") as HTMLInputElement;
+
+if (inputElement) {
+    inputElement.value = "TypeScript User";
+    console.log(inputElement.value);
+}
+
+
+// =============================
+// Exercise 8: switch Statement
+// =============================
+
+function getAction(role: string): string {
+    switch (role) {
+        case "admin":
+            return "Manage users and settings";
+
+        case "editor":
+            return "Edit content";
+
+        case "viewer":
+            return "View content";
+
+        case "guest":
+            return "Limited access";
+
+        default:
+            return "Invalid role";
+    }
+}
+
+console.log(getAction("admin"));
+console.log(getAction("editor"));
+console.log(getAction("viewer"));
+console.log(getAction("guest"));
+console.log(getAction("unknown"));
+
+
+// =============================
+// Exercise 9: Function Overloading
+// =============================
+
+function greet(): string;
+function greet(name: string): string;
+
+function greet(name: string = "Guest"): string {
+    return `Hello, ${name}!`;
+}
+
+console.log(greet());
+console.log(greet("Alice"));
