@@ -1,0 +1,202 @@
+import React, { createContext, useReducer, useContext } from "react";
+
+// Create context
+const TaskContext = createContext();
+
+// Initial state
+const initialState = [];
+
+// Reducer function
+function taskReducer(state, action) {
+  switch (action.type) {
+    case "ADD_TASK":
+      return [
+        ...state,
+        {
+          id: Date.now(),
+          text: action.payload,
+          completed: false,
+        },
+      ];
+
+    case "TOGGLE_TASK":
+      return state.map((task) =>
+        task.id === action.payload
+          ? { ...task, completed: !task.completed }
+          : task
+      );
+
+    case "REMOVE_TASK":
+      return state.filter((task) => task.id !== action.payload);
+
+    default:
+      return state;
+  }
+}
+
+// Provider
+export function TaskProvider({ children }) {
+  const [tasks, dispatch] = useReducer(taskReducer, initialState);
+
+  return (
+    <TaskContext.Provider value={{ tasks, dispatch }}>
+      {children}
+    </TaskContext.Provider>
+  );
+}
+
+// Custom hook (clean usage)
+export function useTasks() {
+  return useContext(TaskContext);
+}
+
+import React, { createContext, useReducer, useContext } from "react";
+
+// Create context
+const TaskContext = createContext();
+
+// Initial state
+const initialState = [];
+
+// Reducer function
+function taskReducer(state, action) {
+  switch (action.type) {
+    case "ADD_TASK":
+      return [
+        ...state,
+        {
+          id: Date.now(),
+          text: action.payload,
+          completed: false,
+        },
+      ];
+
+    case "TOGGLE_TASK":
+      return state.map((task) =>
+        task.id === action.payload
+          ? { ...task, completed: !task.completed }
+          : task
+      );
+
+    case "REMOVE_TASK":
+      return state.filter((task) => task.id !== action.payload);
+
+    default:
+      return state;
+  }
+}
+
+// Provider
+export function TaskProvider({ children }) {
+  const [tasks, dispatch] = useReducer(taskReducer, initialState);
+
+  return (
+    <TaskContext.Provider value={{ tasks, dispatch }}>
+      {children}
+    </TaskContext.Provider>
+  );
+}
+
+// Custom hook (clean usage)
+export function useTasks() {
+  return useContext(TaskContext);
+}
+
+import React from "react";
+import { TaskProvider } from "./context/TaskContext";
+import AddTask from "./components/AddTask";
+import TaskList from "./components/TaskList";
+
+export default function App() {
+  return (
+    <TaskProvider>
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <h1>Task Manager</h1>
+        <AddTask />
+        <TaskList />
+      </div>
+    </TaskProvider>
+  );
+}
+
+import React, { useState } from "react";
+import { useTasks } from "../context/TaskContext";
+
+export default function AddTask() {
+  const [text, setText] = useState("");
+  const { dispatch } = useTasks();
+
+  const handleAdd = () => {
+    if (text.trim() === "") return;
+
+    dispatch({
+      type: "ADD_TASK",
+      payload: text,
+    });
+
+    setText("");
+  };
+
+  return (
+    <div>
+      <input
+        value={text}
+        placeholder="Enter task..."
+        onChange={(e) => setText(e.target.value)}
+      />
+      <button onClick={handleAdd} style={{ marginLeft: "10px" }}>
+        Add
+      </button>
+    </div>
+  );
+}
+import React from "react";
+import { useTasks } from "../context/TaskContext";
+import TaskItem from "./TaskItem";
+
+export default function TaskList() {
+  const { tasks } = useTasks();
+
+  return (
+    <div style={{ marginTop: "20px" }}>
+      {tasks.length === 0 ? (
+        <p>No tasks yet</p>
+      ) : (
+        tasks.map((task) => <TaskItem key={task.id} task={task} />)
+      )}
+    </div>
+  );
+}
+
+import React from "react";
+import { useTasks } from "../context/TaskContext";
+
+export default function TaskItem({ task }) {
+  const { dispatch } = useTasks();
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        gap: "10px",
+        marginBottom: "10px",
+        textDecoration: task.completed ? "line-through" : "none",
+      }}
+    >
+      <span onClick={() => dispatch({ type: "TOGGLE_TASK", payload: task.id })}>
+        {task.text}
+      </span>
+
+      <button
+        onClick={() =>
+          dispatch({ type: "REMOVE_TASK", payload: task.id })
+        }
+      >
+        Delete
+      </button>
+    </div>
+  );
+}
+
+
