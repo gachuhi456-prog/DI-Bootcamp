@@ -1,133 +1,219 @@
 exercise1
+npx create-react-app redux-todo
+cd redux-todo
 
-mkdir blog-api
-cd blog-api
-npm init -y
-npm install express
+npm install redux react-redux
 
-const express = require('express');
-const app = express();
-const PORT = 3000;
+src/
+│
+├── actions/
+│   └── todoActions.js
+│
+├── reducers/
+│   ├── todoReducer.js
+│   └── index.js
+│
+├── components/
+│   ├── TodoForm.js
+│   ├── TodoList.js
+│   └── TodoItem.js
+│
+├── store.js
+├── App.js
+└── index.js
 
-// Middleware to parse JSON
-app.use(express.json());
+export const ADD_TODO = "ADD_TODO";
+export const TOGGLE_TODO = "TOGGLE_TODO";
+export const DELETE_TODO = "DELETE_TODO";
 
-// In-memory "database"
-let posts = [];
-let currentId = 1;
-
-// Router
-const router = express.Router();
-
-/**
- * GET /posts - Get all posts
- */
-router.get('/posts', (req, res) => {
-    res.json(posts);
+export const addTodo = (text) => ({
+  type: ADD_TODO,
+  payload: text,
 });
 
-/**
- * GET /posts/:id - Get post by ID
- */
-router.get('/posts/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const post = posts.find(p => p.id === id);
-
-    if (!post) {
-        return res.status(404).json({ message: 'Post not found' });
-    }
-
-    res.json(post);
+export const toggleTodo = (id) => ({
+  type: TOGGLE_TODO,
+  payload: id,
 });
 
-/**
- * POST /posts - Create a new post
- */
-router.post('/posts', (req, res) => {
-    const { title, content } = req.body;
-
-    // Validation
-    if (!title || !content) {
-        return res.status(400).json({ message: 'Title and content are required' });
-    }
-
-    const newPost = {
-        id: currentId++,
-        title,
-        content,
-        timestamp: new Date()
-    };
-
-    posts.push(newPost);
-
-    res.status(201).json(newPost);
+export const deleteTodo = (id) => ({
+  type: DELETE_TODO,
+  payload: id,
 });
 
-/**
- * PUT /posts/:id - Update a post
- */
-router.put('/posts/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const { title, content } = req.body;
+import {
+  ADD_TODO,
+  TOGGLE_TODO,
+  DELETE_TODO,
+} from "../actions/todoActions";
 
-    const post = posts.find(p => p.id === id);
+const initialState = [];
 
-    if (!post) {
-        return res.status(404).json({ message: 'Post not found' });
-    }
+const todoReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case ADD_TODO:
+      return [
+        ...state,
+        {
+          id: Date.now(),
+          text: action.payload,
+          completed: false,
+        },
+      ];
 
-    if (!title || !content) {
-        return res.status(400).json({ message: 'Title and content are required' });
-    }
+    case TOGGLE_TODO:
+      return state.map((todo) =>
+        todo.id === action.payload
+          ? { ...todo, completed: !todo.completed }
+          : todo
+      );
 
-    post.title = title;
-    post.content = content;
+    case DELETE_TODO:
+      return state.filter(
+        (todo) => todo.id !== action.payload
+      );
 
-    res.json(post);
+    default:
+      return state;
+  }
+};
+
+export default todoReducer;
+
+ import { combineReducers } from "redux";
+import todoReducer from "./todoReducer";
+
+export default combineReducers({
+  todos: todoReducer,
 });
 
-/**
- * DELETE /posts/:id - Delete a post
- */
-router.delete('/posts/:id', (req, res) => {
-    const id = parseInt(req.params.id);
+import { createStore } from "redux";
+import rootReducer from "./reducers";
 
-    const index = posts.findIndex(p => p.id === id);
+const store = createStore(
+  rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ &&
+    window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
-    if (index === -1) {
-        return res.status(404).json({ message: 'Post not found' });
-    }
+export default store;
 
-    const deletedPost = posts.splice(index, 1);
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { addTodo } from "../actions/todoActions";
 
-    res.json({ message: 'Post deleted', post: deletedPost[0] });
-});
+function TodoForm({ addTodo }) {
+  const [text, setText] = useState("");
 
-// Use router
-app.use('/api', router);
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+    if (!text.trim()) return;
 
-node app.js
+    addTodo(text);
+    setText("");
+  };
 
-POST http://localhost:3000/api/posts
-Body (JSON):
-{
-  "title": "My First Post",
-  "content": "Hello world!"
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Enter Todo"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+
+      <button type="submit">
+        Add Todo
+      </button>
+    </form>
+  );
 }
 
-GET http://localhost:3000/api/posts
+export default connect(
+  null,
+  { addTodo }
+)(TodoForm);
 
+import React from "react";
+import { connect } from "react-redux";
+import {
+  toggleTodo,
+  deleteTodo,
+} from "../actions/todoActions";
 
-PUT http://localhost:3000/api/posts/1
-Body:
-{
-  "title": "Updated Title",
-  "content": "Updated content"
+function TodoItem({
+  todo,
+  toggleTodo,
+  deleteTodo,
+}) {
+  return (
+    <li>
+      <span
+        onClick={() => toggleTodo(todo.id)}
+        style={{
+          cursor: "pointer",
+          textDecoration: todo.completed
+            ? "line-through"
+            : "none",
+        }}
+      >
+        {todo.text}
+      </span>
+
+      <button
+        onClick={() => deleteTodo(todo.id)}
+      >
+        Delete
+      </button>
+    </li>
+  );
 }
 
-DELETE http://localhost:3000/api/posts/1
+export default connect(
+  null,
+  { toggleTodo, deleteTodo }
+)(TodoItem);
+
+import React from "react";
+import { connect } from "react-redux";
+import TodoItem from "./TodoItem";
+
+function TodoList({ todos }) {
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+        />
+      ))}
+    </ul>
+  );
+}
+
+const mapStateToProps = (state) => ({
+  todos: state.todos,
+});
+
+export default connect(
+  mapStateToProps
+)(TodoList);
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+
+import App from "./App";
+import store from "./store";
+
+const root = ReactDOM.createRoot(
+  document.getElementById("root")
+);
+
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
+
