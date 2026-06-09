@@ -1,0 +1,373 @@
+// Define base types that can be combined
+interface Identifiable {
+    id: number;
+}
+
+interface Timestamped {
+    createdAt: Date;
+}
+
+interface Named {
+    name: string;
+}
+
+// Generic class Container using intersection types
+class Container<T> {
+    private items: T[] = [];
+
+    // Add an item to the container
+    add(item: T): void {
+        this.items.push(item);
+    }
+
+    // Remove an item by index
+    remove(index: number): T | undefined {
+        if (index >= 0 && index < this.items.length) {
+            return this.items.splice(index, 1)[0];
+        }
+        return undefined;
+    }
+
+    // List all items
+    list(): T[] {
+        return [...this.items]; // Return copy to prevent external mutation
+    }
+
+    // Get item count
+    count(): number {
+        return this.items.length;
+    }
+
+    // Find item by predicate
+    find(predicate: (item: T) => boolean): T | undefined {
+        return this.items.find(predicate);
+    }
+}
+
+// Test with intersection type: Identifiable & Timestamped & Named
+type Product = Identifiable & Timestamped & Named & {
+    price: number;
+    category: string;
+};
+
+const productContainer = new Container<Product>();
+
+// Add products
+productContainer.add({
+    id: 1,
+    createdAt: new Date(),
+    name: "Laptop",
+    price: 999.99,
+    category: "Electronics"
+});
+
+productContainer.add({
+    id: 2,
+    createdAt: new Date(),
+    name: "Mouse",
+    price: 29.99,
+    category: "Accessories"
+});
+
+console.log("All Products:", productContainer.list());
+console.log("Count:", productContainer.count());
+
+// Find product by name
+const found = productContainer.find(item => item.name === "Laptop");
+console.log("Found:", found);
+
+// Remove first item
+const removed = productContainer.remove(0);
+console.log("Removed:", removed);
+console.log("Remaining:", productContainer.list());
+
+// Test with different intersection type: Identifiable & Named
+type User = Identifiable & Named & {
+    email: string;
+    role: string;
+};
+
+const userContainer = new Container<User>();
+userContainer.add({
+    id: 101,
+    name: "Alice Johnson",
+    email: "alice@example.com",
+    role: "Admin"
+});
+
+console.log("Users:", userContainer.list());
+
+
+// Generic interface for API responses
+interface Response<T> {
+    status: number;
+    message: string;
+    data: T;
+    timestamp: string;
+}
+
+// User data type
+interface UserData {
+    id: number;
+    username: string;
+    email: string;
+}
+
+// Product data type
+interface ProductData {
+    sku: string;
+    name: string;
+    price: number;
+    inStock: boolean;
+}
+
+// Function to parse and cast response data
+function parseResponse<T>(response: Response<any>, typeGuard?: (data: any) => data is T): Response<T> {
+    // Cast the data to the desired type T
+    const castedData = response.data as T;
+    
+    // Return new response with casted data
+    const parsedResponse: Response<T> = {
+        status: response.status,
+        message: response.message,
+        data: castedData,
+        timestamp: response.timestamp
+    };
+    
+    return parsedResponse;
+}
+
+// Alternative version with runtime type checking using type guard
+function parseResponseSafe<T>(
+    response: Response<any>, 
+    validator: (data: any) => boolean
+): Response<T> | null {
+    if (!validator(response.data)) {
+        console.error("Data validation failed");
+        return null;
+    }
+    
+    return {
+        status: response.status,
+        message: response.message,
+        data: response.data as T,
+        timestamp: response.timestamp
+    };
+}
+
+// Type guards for validation
+function isUserData(data: any): data is UserData {
+    return data && 
+           typeof data.id === 'number' && 
+           typeof data.username === 'string' && 
+           typeof data.email === 'string';
+}
+
+function isProductData(data: any): data is ProductData {
+    return data && 
+           typeof data.sku === 'string' && 
+           typeof data.name === 'string' && 
+           typeof data.price === 'number';
+}
+
+// Test implementations
+const mockUserResponse: Response<any> = {
+    status: 200,
+    message: "Success",
+    data: {
+        id: 1,
+        username: "john_doe",
+        email: "john@example.com"
+    },
+    timestamp: new Date().toISOString()
+};
+
+const mockProductResponse: Response<any> = {
+    status: 200,
+    message: "Success",
+    data: {
+        sku: "LAPTOP-001",
+        name: "Gaming Laptop",
+        price: 1299.99,
+        inStock: true
+    },
+    timestamp: new Date().toISOString()
+};
+
+// Parse user response
+const userResponse = parseResponse<UserData>(mockUserResponse);
+console.log("User Response:", userResponse);
+console.log("Username:", userResponse.data.username);
+
+// Parse product response
+const productResponse = parseResponse<ProductData>(mockProductResponse);
+console.log("Product Response:", productResponse);
+console.log("Product Price:", productResponse.data.price);
+
+// Using safe parsing with type guards
+const safeUserResponse = parseResponseSafe<UserData>(mockUserResponse, isUserData);
+console.log("Safe User Response:", safeUserResponse);
+
+// Test with invalid data
+const invalidResponse: Response<any> = {
+    status: 200,
+    message: "Success",
+    data: { invalid: "data" },
+    timestamp: new Date().toISOString()
+};
+
+const failedParse = parseResponseSafe<UserData>(invalidResponse, isUserData);
+console.log("Failed Parse:", failedParse); // null
+
+
+// Generic class Repository with type assertions
+class Repository<T> {
+    private items: Map<string, T> = new Map();
+    private idCounter: number = 0;
+
+    // Add item with auto-generated or provided key
+    add(item: T, key?: string): string {
+        const itemKey = key || this.generateId();
+        this.items.set(itemKey, item);
+        return itemKey;
+    }
+
+    // Retrieve item with type assertion
+    retrieve(key: string): T {
+        const item = this.items.get(key);
+        
+        // Type assertion: we assert that item is definitely T
+        // If not found, we throw an error or return a default
+        if (item === undefined) {
+            throw new Error(`Item with key "${key}" not found`);
+        }
+        
+        // Type assertion to ensure TypeScript knows this is T
+        return item as T;
+    }
+
+    // Safe retrieve with type assertion and null check
+    retrieveSafe(key: string): T | null {
+        const item = this.items.get(key);
+        return (item as T | undefined) ?? null;
+    }
+
+    // List all items with type assertions
+    list(): Array<{ key: string; item: T }> {
+        const result: Array<{ key: string; item: T }> = [];
+        
+        this.items.forEach((value, key) => {
+            // Type assertion ensures value is treated as T
+            result.push({
+                key: key,
+                item: value as T
+            });
+        });
+        
+        return result;
+    }
+
+    // Update item with type assertion
+    update(key: string, updates: Partial<T>): T {
+        const existing = this.items.get(key);
+        
+        if (!existing) {
+            throw new Error(`Item with key "${key}" not found`);
+        }
+        
+        // Type assertion for the merged object
+        const updated = { ...existing, ...updates } as T;
+        this.items.set(key, updated);
+        
+        return updated;
+    }
+
+    // Delete item
+    delete(key: string): boolean {
+        return this.items.delete(key);
+    }
+
+    // Check if exists
+    exists(key: string): boolean {
+        return this.items.has(key);
+    }
+
+    // Get count
+    count(): number {
+        return this.items.size;
+    }
+
+    private generateId(): string {
+        return `item_${++this.idCounter}`;
+    }
+}
+
+// Define entity interfaces
+interface Employee {
+    id: string;
+    name: string;
+    department: string;
+    salary: number;
+}
+
+interface Task {
+    title: string;
+    description: string;
+    completed: boolean;
+    dueDate: Date;
+}
+
+// Test with Employee type
+const employeeRepo = new Repository<Employee>();
+
+const empKey1 = employeeRepo.add({
+    id: "E001",
+    name: "Sarah Connor",
+    department: "Engineering",
+    salary: 85000
+});
+
+const empKey2 = employeeRepo.add({
+    id: "E002",
+    name: "John Smith",
+    department: "Marketing",
+    salary: 65000
+}, "custom-key");
+
+console.log("Employee Keys:", empKey1, empKey2);
+
+// Retrieve with type assertion (returns exact type)
+const employee = employeeRepo.retrieve(empKey1);
+console.log("Retrieved Employee:", employee);
+console.log("Employee Name:", employee.name); // TypeScript knows this is string
+console.log("Employee Salary:", employee.salary); // TypeScript knows this is number
+
+// Safe retrieve
+const safeEmployee = employeeRepo.retrieveSafe("non-existent");
+console.log("Safe Retrieve (null):", safeEmployee);
+
+// List all
+console.log("All Employees:", employeeRepo.list());
+
+// Update
+const updated = employeeRepo.update(empKey1, { salary: 90000 });
+console.log("Updated Employee:", updated);
+
+// Test with Task type
+const taskRepo = new Repository<Task>();
+
+const taskKey = taskRepo.add({
+    title: "Implement Feature",
+    description: "Add user authentication",
+    completed: false,
+    dueDate: new Date("2024-12-31")
+});
+
+const task = taskRepo.retrieve(taskKey);
+console.log("Task Title:", task.title);
+console.log("Task Due Date:", task.dueDate);
+
+// Type safety demonstration
+// The following would cause compile errors if uncommented:
+// const wrongRepo = new Repository<string>();
+// wrongRepo.add(123); // Error: Argument of type 'number' is not assignable to parameter of type 'string'

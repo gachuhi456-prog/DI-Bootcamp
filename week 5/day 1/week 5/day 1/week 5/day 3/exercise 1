@@ -1,0 +1,170 @@
+class Employee {
+    protected name: string;
+    protected salary: number;
+
+    constructor(name: string, salary: number) {
+        this.name = name;
+        this.salary = salary;
+    }
+
+    getDetails(): string {
+        return `Name: ${this.name}, Salary: $${this.salary}`;
+    }
+}
+
+class Manager extends Employee {
+    public department: string;
+
+    constructor(name: string, salary: number, department: string) {
+        super(name, salary);
+        this.department = department;
+    }
+
+    getDetails(): string {
+        return `${super.getDetails()}, Department: ${this.department}`;
+    }
+}
+
+// Create instance and test
+const manager = new Manager("Alice Johnson", 80000, "Engineering");
+console.log(manager.getDetails()); 
+// Output: Name: Alice Johnson, Salary: $80000, Department: Engineering
+
+class Car {
+    public readonly make: string;
+    private readonly model: string;
+    public year: number;
+
+    constructor(make: string, model: string, year: number) {
+        this.make = make;
+        this.model = model;
+        this.year = year;
+    }
+
+    getCarDetails(): string {
+        return `Make: ${this.make}, Model: ${this.model}, Year: ${this.year}`;
+    }
+}
+
+// Create instance
+const myCar = new Car("Toyota", "Camry", 2023);
+
+console.log(myCar.getCarDetails());
+// Output: Make: Toyota, Model: Camry, Year: 2023
+
+// Attempt to modify readonly properties (these will cause TypeScript errors)
+// myCar.make = "Honda";     // Error: Cannot assign to 'make' because it is a read-only property
+// myCar["model"] = "Accord"; // Error: Cannot assign to 'model' because it is a read-only property
+
+// This works fine (not readonly)
+myCar.year = 2024;
+console.log(myCar.getCarDetails());
+// Output: Make: Toyota, Model: Camry, Year: 2024
+
+
+
+class MathUtils {
+    static PI: number = 3.14159;
+
+    static circumference(radius: number): number {
+        return 2 * MathUtils.PI * radius;
+    }
+}
+
+// Call static method without creating an instance
+const radius = 5;
+const result = MathUtils.circumference(radius);
+
+console.log(`Circumference of circle with radius ${radius}: ${result.toFixed(2)}`);
+// Output: Circumference of circle with radius 5: 31.42
+
+// Access static property directly
+console.log(`Value of PI: ${MathUtils.PI}`);
+// Output: Value of PI: 3.14159
+
+
+interface Operation {
+    (a: number, b: number): number;
+}
+
+class Addition {
+    // Implement the function type
+    operate: Operation = (a: number, b: number): number => {
+        return a + b;
+    };
+}
+
+class Multiplication {
+    // Implement the function type
+    operate: Operation = (a: number, b: number): number => {
+        return a * b;
+    };
+}
+
+// Create instances and use them
+const adder = new Addition();
+const multiplier = new Multiplication();
+
+const num1 = 10;
+const num2 = 5;
+
+console.log(`Addition: ${num1} + ${num2} = ${adder.operate(num1, num2)}`);
+// Output: Addition: 10 + 5 = 15
+
+console.log(`Multiplication: ${num1} * ${num2} = ${multiplier.operate(num1, num2)}`);
+// Output: Multiplication: 10 * 5 = 50
+
+
+interface Shape {
+    color: string;
+    getArea(): number;
+}
+
+interface Rectangle extends Shape {
+    readonly width: number;
+    readonly height: number;
+    getPerimeter(): number;
+}
+
+class RectangleImpl implements Rectangle {
+    color: string;
+    readonly width: number;
+    readonly height: number;
+
+    constructor(color: string, width: number, height: number) {
+        this.color = color;
+        this.width = width;
+        this.height = height;
+    }
+
+    getArea(): number {
+        return this.width * this.height;
+    }
+
+    getPerimeter(): number {
+        return 2 * (this.width + this.height);
+    }
+}
+
+// Create instance and test
+const myRectangle = new RectangleImpl("Blue", 10, 5);
+
+console.log(`Color: ${myRectangle.color}`);
+console.log(`Width: ${myRectangle.width}, Height: ${myRectangle.height}`);
+console.log(`Area: ${myRectangle.getArea()}`);
+console.log(`Perimeter: ${myRectangle.getPerimeter()}`);
+
+// Attempt to modify readonly properties (will cause TypeScript error)
+// myRectangle.width = 20;  // Error: Cannot assign to 'width' because it is a read-only property
+
+// This works fine (not readonly)
+myRectangle.color = "Red";
+console.log(`Updated Color: ${myRectangle.color}`);
+
+/* Output:
+Color: Blue
+Width: 10, Height: 5
+Area: 50
+Perimeter: 30
+Updated Color: Red
+*/

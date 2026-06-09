@@ -1,0 +1,463 @@
+class Employee {
+    public name: string;
+    private age: number;
+    protected salary: number;
+
+    constructor(name: string, age: number, salary: number) {
+        this.name = name;
+        this.age = age;
+        this.salary = salary;
+    }
+
+    // Protected method: accessible in derived classes, not from outside
+    protected calculateBonus(): number {
+        return this.salary * 0.1; // 10% bonus
+    }
+
+    public getSalaryDetails(): string {
+        return `Base Salary: $${this.salary}`;
+    }
+
+    // Public getter for private age (controlled access)
+    public getAge(): number {
+        return this.age;
+    }
+}
+
+class Manager extends Employee {
+    constructor(name: string, age: number, salary: number) {
+        super(name, age, salary);
+    }
+
+    // Override to include bonus calculation
+    public getSalaryDetails(): string {
+        const bonus = this.calculateBonus(); // Can access protected method
+        return `${super.getSalaryDetails()}, Bonus: $${bonus.toFixed(2)}, Total: $${(this.salary + bonus).toFixed(2)}`;
+    }
+
+    // Manager-specific method
+    public manageTeam(): string {
+        return `${this.name} is managing a team.`;
+    }
+}
+
+class ExecutiveManager extends Manager {
+    private budgetApprovalLimit: number;
+
+    constructor(name: string, age: number, salary: number, budgetApprovalLimit: number) {
+        super(name, age, salary);
+        this.budgetApprovalLimit = budgetApprovalLimit;
+    }
+
+    // New method specific to ExecutiveManager
+    public approveBudget(amount: number): string {
+        if (amount <= this.budgetApprovalLimit) {
+            return `Budget of $${amount} approved by ${this.name}.`;
+        } else {
+            return `Budget of $${amount} exceeds approval limit of $${this.budgetApprovalLimit}.`;
+        }
+    }
+
+    public getExecutiveDetails(): string {
+        return `Executive: ${this.name}, Approval Limit: $${this.budgetApprovalLimit}`;
+    }
+}
+
+// Create instance and test encapsulation
+const execManager = new ExecutiveManager("Sarah Chen", 45, 150000, 500000);
+
+console.log(execManager.name); // Public: accessible
+// console.log(execManager.age); // Error: Property 'age' is private
+// console.log(execManager.salary); // Error: Property 'salary' is protected
+// execManager.calculateBonus(); // Error: Property 'calculateBonus' is protected
+
+console.log(execManager.getSalaryDetails());
+console.log(execManager.manageTeam());
+console.log(execManager.approveBudget(300000));
+console.log(execManager.approveBudget(600000));
+console.log(execManager.getExecutiveDetails());
+console.log(`Age (via getter): ${execManager.getAge()}`);
+
+/* Output:
+Sarah Chen
+Base Salary: $150000, Bonus: $15000.00, Total: $165000.00
+Sarah Chen is managing a team.
+Budget of $300000 approved by Sarah Chen.
+Budget of $600000 exceeds approval limit of $500000.
+Executive: Sarah Chen, Approval Limit: $500000
+Age (via getter): 45
+*/
+
+class Shape {
+    static totalShapes: number = 0;
+
+    constructor() {
+        Shape.totalShapes++; // Increment on every instance creation
+    }
+
+    static getType(): string {
+        return "Generic Shape";
+    }
+
+    static getTotalShapes(): number {
+        return Shape.totalShapes;
+    }
+
+    calculateArea(): number {
+        return 0;
+    }
+}
+
+class Circle extends Shape {
+    radius: number;
+
+    constructor(radius: number) {
+        super();
+        this.radius = radius;
+    }
+
+    static getType(): string {
+        return "Circle";
+    }
+
+    calculateArea(): number {
+        return Math.PI * this.radius * this.radius;
+    }
+
+    static calculateCircumference(radius: number): number {
+        return 2 * Math.PI * radius;
+    }
+}
+
+class Square extends Shape {
+    side: number;
+
+    constructor(side: number) {
+        super();
+        this.side = side;
+    }
+
+    static getType(): string {
+        return "Square";
+    }
+
+    calculateArea(): number {
+        return this.side * this.side;
+    }
+
+    static calculatePerimeter(side: number): number {
+        return 4 * side;
+    }
+}
+
+// Test static properties and methods
+console.log(`Initial total shapes: ${Shape.getTotalShapes()}`);
+
+const circle1 = new Circle(5);
+const circle2 = new Circle(3);
+const square1 = new Square(4);
+
+console.log(`Shape.getType(): ${Shape.getType()}`);
+console.log(`Circle.getType(): ${Circle.getType()}`);
+console.log(`Square.getType(): ${Square.getType()}`);
+
+console.log(`Circle 1 area: ${circle1.calculateArea().toFixed(2)}`);
+console.log(`Circle 2 circumference: ${Circle.calculateCircumference(circle2.radius).toFixed(2)}`);
+console.log(`Square 1 area: ${square1.calculateArea()}`);
+console.log(`Square 1 perimeter: ${Square.calculatePerimeter(square1.side)}`);
+
+console.log(`Total shapes created: ${Shape.getTotalShapes()}`);
+
+/* Output:
+Initial total shapes: 0
+Shape.getType(): Generic Shape
+Circle.getType(): Circle
+Square.getType(): Square
+Circle 1 area: 78.54
+Circle 2 circumference: 18.85
+Square 1 area: 16
+Square 1 perimeter: 16
+Total shapes created: 3
+*/
+
+// Define function type for operations
+type OperationFunction = (a: number, b: number) => number;
+
+interface Calculator {
+    a: number;
+    b: number;
+    operate(operation: OperationFunction): number;
+}
+
+class AdvancedCalculator implements Calculator {
+    a: number;
+    b: number;
+
+    constructor(a: number, b: number) {
+        this.a = a;
+        this.b = b;
+    }
+
+    operate(operation: OperationFunction): number {
+        return operation(this.a, this.b);
+    }
+
+    // Predefined operations
+    add(): number {
+        return this.operate((x, y) => x + y);
+    }
+
+    subtract(): number {
+        return this.operate((x, y) => x - y);
+    }
+
+    multiply(): number {
+        return this.operate((x, y) => x * y);
+    }
+
+    divide(): number {
+        return this.operate((x, y) => {
+            if (y === 0) throw new Error("Division by zero");
+            return x / y;
+        });
+    }
+
+    // Power operation using operate method
+    power(): number {
+        return this.operate((x, y) => Math.pow(x, y));
+    }
+
+    // Custom operation
+    customOperation(operation: OperationFunction): number {
+        return this.operate(operation);
+    }
+}
+
+// Test the calculator
+const calc = new AdvancedCalculator(10, 3);
+
+console.log(`Numbers: ${calc.a} and ${calc.b}`);
+console.log(`Add: ${calc.add()}`);
+console.log(`Subtract: ${calc.subtract()}`);
+console.log(`Multiply: ${calc.multiply()}`);
+console.log(`Divide: ${calc.divide().toFixed(2)}`);
+console.log(`Power: ${calc.power()}`);
+
+// Custom operation using lambda
+const modulo = calc.customOperation((a, b) => a % b);
+console.log(`Modulo (custom): ${modulo}`);
+
+// Using operate directly with different function
+const average = calc.operate((a, b) => (a + b) / 2);
+console.log(`Average (direct operate): ${average}`);
+
+/* Output:
+Numbers: 10 and 3
+Add: 13
+Subtract: 7
+Multiply: 30
+Divide: 3.33
+Power: 1000
+Modulo (custom): 1
+Average (direct operate): 6.5
+*/
+
+
+class Device {
+    readonly serialNumber: string;
+    public manufacturer: string;
+
+    constructor(serialNumber: string, manufacturer: string) {
+        this.serialNumber = serialNumber;
+        this.manufacturer = manufacturer;
+    }
+
+    getDeviceInfo(): string {
+        return `Serial: ${this.serialNumber}, Manufacturer: ${this.manufacturer}`;
+    }
+}
+
+class Laptop extends Device {
+    model: string;
+    price: number;
+    private specs: string;
+
+    constructor(
+        serialNumber: string,
+        manufacturer: string,
+        model: string,
+        price: number,
+        specs: string
+    ) {
+        super(serialNumber, manufacturer);
+        this.model = model;
+        this.price = price;
+        this.specs = specs;
+    }
+
+    // Override to include laptop-specific details
+    getDeviceInfo(): string {
+        return `${super.getDeviceInfo()}, Model: ${this.model}, Price: $${this.price}, Specs: ${this.specs}`;
+    }
+
+    updatePrice(newPrice: number): void {
+        this.price = newPrice;
+        console.log(`Price updated to $${this.price}`);
+    }
+
+    updateModel(newModel: string): void {
+        this.model = newModel;
+        console.log(`Model updated to ${this.model}`);
+    }
+
+    // Cannot update serialNumber - it's readonly
+    // updateSerial(newSerial: string): void {
+    //     this.serialNumber = newSerial; // Error: Cannot assign to 'serialNumber' because it is a read-only property
+    // }
+}
+
+// Test readonly and mutable properties
+const myLaptop = new Laptop(
+    "SN123456789",
+    "Dell",
+    "XPS 15",
+    1999,
+    "Intel i7, 16GB RAM, 512GB SSD"
+);
+
+console.log(myLaptop.getDeviceInfo());
+
+// These work - mutable properties
+myLaptop.updatePrice(1799);
+myLaptop.updateModel("XPS 15 Plus");
+myLaptop.manufacturer = "Dell Technologies";
+
+console.log(myLaptop.getDeviceInfo());
+
+// This would fail - readonly property
+// myLaptop.serialNumber = "SN987654321"; // Compile-time error
+
+console.log(`Serial Number (readonly): ${myLaptop.serialNumber}`);
+
+/* Output:
+Serial: SN123456789, Manufacturer: Dell, Model: XPS 15, Price: $1999, Specs: Intel i7, 16GB RAM, 512GB SSD
+Price updated to $1799
+Model updated to XPS 15 Plus
+Serial: SN123456789, Manufacturer: Dell Technologies, Model: XPS 15 Plus, Price: $1799, Specs: Intel i7, 16GB RAM, 512GB SSD
+Serial Number (readonly): SN123456789
+*/
+
+
+interface Product {
+    readonly name: string;
+    price: number;
+    discount?: number; // Optional property
+}
+
+interface Electronics extends Product {
+    warrantyPeriod: number; // in months
+}
+
+class Smartphone implements Electronics {
+    readonly name: string;
+    price: number;
+    discount?: number;
+    warrantyPeriod: number;
+    brand: string;
+
+    constructor(
+        name: string,
+        price: number,
+        warrantyPeriod: number,
+        brand: string,
+        discount?: number
+    ) {
+        this.name = name;
+        this.price = price;
+        this.warrantyPeriod = warrantyPeriod;
+        this.brand = brand;
+        if (discount !== undefined) {
+            this.discount = discount;
+        }
+    }
+
+    calculateFinalPrice(): number {
+        if (this.discount) {
+            return this.price - (this.price * this.discount) / 100;
+        }
+        return this.price;
+    }
+
+    getProductDetails(): string {
+        const finalPrice = this.calculateFinalPrice();
+        const discountInfo = this.discount ? `${this.discount}% off` : "No discount";
+        
+        return `
+Product: ${this.name}
+Brand: ${this.brand}
+Original Price: $${this.price}
+Discount: ${discountInfo}
+Final Price: $${finalPrice.toFixed(2)}
+Warranty: ${this.warrantyPeriod} months
+        `.trim();
+    }
+
+    updatePrice(newPrice: number): void {
+        this.price = newPrice;
+    }
+
+    updateDiscount(newDiscount: number | undefined): void {
+        this.discount = newDiscount;
+    }
+
+    // Cannot update name - it's readonly
+    // updateName(newName: string): void {
+    //     this.name = newName; // Error: Cannot assign to 'name' because it is a read-only property
+    // }
+}
+
+// Test with discount
+const iPhone = new Smartphone("iPhone 15 Pro", 999, 12, "Apple", 10);
+console.log(iPhone.getProductDetails());
+console.log("---");
+
+// Test without discount
+const samsung = new Smartphone("Galaxy S24", 899, 24, "Samsung");
+console.log(samsung.getProductDetails());
+console.log("---");
+
+// Update mutable properties
+samsung.updatePrice(849);
+samsung.updateDiscount(15);
+console.log("After updates:");
+console.log(samsung.getProductDetails());
+
+// Verify readonly
+console.log(`\nReadonly name check: ${iPhone.name}`);
+// iPhone.name = "iPhone 16"; // Error: Cannot assign to 'name' because it is a read-only property
+
+/* Output:
+Product: iPhone 15 Pro
+Brand: Apple
+Original Price: $999
+Discount: 10% off
+Final Price: $899.10
+Warranty: 12 months
+---
+Product: Galaxy S24
+Brand: Samsung
+Original Price: $899
+Discount: No discount
+Final Price: $899.00
+Warranty: 24 months
+---
+After updates:
+Product: Galaxy S24
+Brand: Samsung
+Original Price: $849
+Discount: 15% off
+Final Price: $721.65
+Warranty: 24 months
+
+Readonly name check: iPhone 15 Pro
+*/

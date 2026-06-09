@@ -1,0 +1,4 @@
+let person1 = new Person("123", "John", "Doe");
+
+console.log(person1);
+

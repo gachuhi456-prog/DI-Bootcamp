@@ -1,0 +1,96 @@
+// ==========================================
+// Exercise 1: Union Types
+// ==========================================
+console.log("--- Exercise 1: Union Types ---");
+
+function processValue(input: string | number): string {
+    if (typeof input === "number") {
+        // Format number as currency (e.g., $100.00)
+        return `$${input.toFixed(2)}`;
+    } else {
+        // Return the reversed string
+        return input.split('').reverse().join('');
+    }
+}
+
+// Test the Function
+console.log(processValue(100));       // Output: $100.00
+console.log(processValue(123.456));   // Output: $123.46
+console.log(processValue("TypeScript")); // Output: tpircSepyT
+
+
+// ==========================================
+// Exercise 2: Array Type Annotations
+// ==========================================
+console.log("\n--- Exercise 2: Array Type Annotations ---");
+
+function sumNumbersInArray(arr: (number | string)[]): number {
+    let sum = 0;
+    
+    for (const item of arr) {
+        // Type guard: check if the item is a number
+        if (typeof item === "number") {
+            sum += item;
+        }
+    }
+    
+    return sum;
+}
+
+// Test the Function
+const mixedArray1 = [10, "apple", 20, "banana", 30];
+console.log(`Sum of [10, "apple", 20, "banana", 30]:`, sumNumbersInArray(mixedArray1)); // Output: 60
+
+const mixedArray2 = ["only", "strings", "here"];
+console.log(`Sum of ["only", "strings", "here"]:`, sumNumbersInArray(mixedArray2)); // Output: 0
+
+
+// ==========================================
+// Exercise 3: Type Aliases
+// ==========================================
+console.log("\n--- Exercise 3: Type Aliases ---");
+
+// Define a Type Alias
+type AdvancedUser = {
+    name: string;
+    age: number;
+    address?: string; // Optional property
+};
+
+function introduceAdvancedUser(user: AdvancedUser): string {
+    let message = `Hello, my name is ${user.name} and I am ${user.age} years old.`;
+    
+    // Check if optional property is present
+    if (user.address) {
+        message += ` I live at ${user.address}.`;
+    }
+    
+    return message;
+}
+
+// Test the Function
+const userWithAddress: AdvancedUser = { name: "Alice", age: 28, address: "123 Main St" };
+const userWithoutAddress: AdvancedUser = { name: "Bob", age: 22 };
+
+console.log(introduceAdvancedUser(userWithAddress));
+// Output: Hello, my name is Alice and I am 28 years old. I live at 123 Main St.
+
+console.log(introduceAdvancedUser(userWithoutAddress));
+// Output: Hello, my name is Bob and I am 22 years old.
+
+
+// ==========================================
+// Exercise 4: Optional Parameters
+// ==========================================
+console.log("\n--- Exercise 4: Optional Parameters ---");
+
+function welcomeUser(name: string, greeting?: string): string {
+    // Use conditional logic to apply default greeting if none is provided
+    const finalGreeting = greeting ? greeting : "Hello";
+    
+    return `${finalGreeting}, ${name}!`;
+}
+
+// Test the Function
+console.log(welcomeUser("Charlie"));                  // Output: Hello, Charlie!
+console.log(welcomeUser("Dana", "Good morning"));     // Output: Good morning, Dana!

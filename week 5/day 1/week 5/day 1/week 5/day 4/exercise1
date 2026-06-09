@@ -1,0 +1,218 @@
+// Define User interface
+interface User {
+    name: string;
+    email: string;
+}
+
+// Define Admin interface
+interface Admin {
+    adminLevel: number;
+}
+
+// Create intersection type combining both
+type AdminUser = User & Admin;
+
+// Function to get property with type guard
+function getProperty(obj: AdminUser, propertyName: string): any | undefined {
+    // Type guard: check if property exists on the object
+    if (propertyName in obj) {
+        return (obj as any)[propertyName];
+    }
+    return undefined;
+}
+
+// Test the implementation
+const adminUser: AdminUser = {
+    name: "John Doe",
+    email: "john@example.com",
+    adminLevel: 5
+};
+
+console.log(getProperty(adminUser, "name"));        // Output: "John Doe"
+console.log(getProperty(adminUser, "email"));     // Output: "john@example.com"
+console.log(getProperty(adminUser, "adminLevel")); // Output: 5
+console.log(getProperty(adminUser, "nonexistent")); // Output: undefined
+
+// Generic function that casts value to a specific type using constructor
+function castToType<T>(value: any, constructor: new (value: any) => T): T {
+    return new constructor(value);
+}
+
+// Demonstration: Cast string to number
+const stringToNumber = castToType("42", Number);
+console.log(stringToNumber);           // Output: 42 (number)
+console.log(typeof stringToNumber);    // Output: "number"
+
+// Demonstration: Cast string to boolean
+const stringToBoolean = castToType("true", Boolean);
+console.log(stringToBoolean);          // Output: true (boolean)
+console.log(typeof stringToBoolean);   // Output: "boolean"
+
+// Additional demonstration: Cast to String object
+const stringToString = castToType(123, String);
+console.log(stringToString);           // Output: "123" (String object)
+console.log(typeof stringToString);    // Output: "object" (but wraps "123")
+
+// Cast array to Date
+const stringToDate = castToType("2024-01-01", Date);
+console.log(stringToDate);             // Output: Date object
+
+// Generic function with constraints - only accepts number or string arrays
+function getArrayLength<T extends number | string>(arr: T[]): number {
+    // Type assertion to ensure TypeScript treats it as array with length
+    const arrayWithLength = arr as { length: number };
+    return arrayWithLength.length;
+}
+
+// Test with number array
+const numberArray: number[] = [1, 2, 3, 4, 5];
+console.log(getArrayLength(numberArray));  // Output: 5
+
+// Test with string array
+const stringArray: string[] = ["a", "b", "c"];
+console.log(getArrayLength(stringArray));  // Output: 3
+
+// Test with empty array
+const emptyArray: number[] = [];
+console.log(getArrayLength(emptyArray));   // Output: 0
+
+// This would cause compile error:
+// const boolArray: boolean[] = [true, false];
+// getArrayLength(boolArray); // Error: Type 'boolean' does not satisfy the constraint 'string | number'
+
+// Define generic interface Storage
+interface Storage<T> {
+    add(item: T): void;
+    get(index: number): T | undefined;
+}
+
+// Implement the interface in a class Box
+class Box<T> implements Storage<T> {
+    private items: T[] = [];
+
+    // Add item to storage
+    add(item: T): void {
+        this.items.push(item);
+    }
+
+    // Get item by index
+    get(index: number): T | undefined {
+        if (index >= 0 && index < this.items.length) {
+            return this.items[index];
+        }
+        return undefined;
+    }
+
+    // Helper method to get all items (for testing)
+    getAll(): T[] {
+        return [...this.items];
+    }
+}
+
+// Test with number type
+const numberBox = new Box<number>();
+numberBox.add(10);
+numberBox.add(20);
+numberBox.add(30);
+console.log(numberBox.get(0));    // Output: 10
+console.log(numberBox.get(1));    // Output: 20
+console.log(numberBox.get(5));    // Output: undefined
+
+// Test with string type
+const stringBox = new Box<string>();
+stringBox.add("Hello");
+stringBox.add("World");
+console.log(stringBox.get(0));    // Output: "Hello"
+console.log(stringBox.get(1));    // Output: "World"
+
+// Test with custom object type
+interface Person {
+    name: string;
+    age: number;
+}
+
+const personBox = new Box<Person>();
+personBox.add({ name: "Alice", age: 30 });
+personBox.add({ name: "Bob", age: 25 });
+console.log(personBox.get(0));    // Output: { name: "Alice", age: 30 }
+console.log(personBox.get(1));    // Output: { name: "Bob", age: 25 }
+
+// Define interface Item with value property
+interface Item<T> {
+    value: T;
+}
+
+// Generic class Queue with constraint that T must have value property
+class Queue<T extends Item<any>> {
+    private items: T[] = [];
+
+    // Add item to queue
+    add(item: T): void {
+        this.items.push(item);
+    }
+
+    // Remove and return first item from queue
+    remove(): T | undefined {
+        return this.items.shift();
+    }
+
+    // Peek at first item without removing
+    peek(): T | undefined {
+        return this.items[0];
+    }
+
+    // Get queue size
+    size(): number {
+        return this.items.length;
+    }
+
+    // Check if queue is empty
+    isEmpty(): boolean {
+        return this.items.length === 0;
+    }
+}
+
+// Test with number values
+interface NumberItem extends Item<number> {
+    value: number;
+    label?: string;
+}
+
+const numberQueue = new Queue<NumberItem>();
+numberQueue.add({ value: 100, label: "First" });
+numberQueue.add({ value: 200, label: "Second" });
+console.log(numberQueue.remove());  // Output: { value: 100, label: "First" }
+console.log(numberQueue.size());    // Output: 1
+
+// Test with string values
+interface StringItem extends Item<string> {
+    value: string;
+    priority?: number;
+}
+
+const stringQueue = new Queue<StringItem>();
+stringQueue.add({ value: "Task 1", priority: 1 });
+stringQueue.add({ value: "Task 2", priority: 2 });
+stringQueue.add({ value: "Task 3" });
+console.log(stringQueue.remove());  // Output: { value: "Task 1", priority: 1 }
+console.log(stringQueue.peek());    // Output: { value: "Task 2", priority: 2 }
+console.log(stringQueue.size());    // Output: 2
+
+// Test with complex object values
+interface ProductItem extends Item<{ id: number; name: string }> {
+    value: { id: number; name: string };
+    category: string;
+}
+
+const productQueue = new Queue<ProductItem>();
+productQueue.add({ 
+    value: { id: 1, name: "Laptop" }, 
+    category: "Electronics" 
+});
+productQueue.add({ 
+    value: { id: 2, name: "Mouse" }, 
+    category: "Accessories" 
+});
+
+console.log(productQueue.remove()); // Output: { value: { id: 1, name: "Laptop" }, category: "Electronics" }
+console.log(productQueue.isEmpty()); // Output: false
