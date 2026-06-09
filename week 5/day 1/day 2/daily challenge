@@ -1,0 +1,49 @@
+// ==========================================
+// Exercise: validateUnionType
+// ==========================================
+
+/**
+ * Checks if a value's runtime type matches one of the allowed types.
+ * @param value - The value to check.
+ * @param allowedTypes - An array of strings representing allowed types (e.g., ["string", "number"]).
+ * @returns True if the value's type is in the allowedTypes array, false otherwise.
+ */
+function validateUnionType(value: any, allowedTypes: string[]): boolean {
+    // Get the runtime type of the value (e.g., "string", "number", "boolean", "object")
+    const actualType = typeof value;
+
+    // Check if the actual type exists within the array of allowed types
+    return allowedTypes.includes(actualType);
+}
+
+// ==========================================
+// Demonstration / Testing
+// ==========================================
+
+console.log("--- Testing validateUnionType ---\n");
+
+// Test Case 1: String value
+const myString = "Hello, World!";
+const isStringAllowed = validateUnionType(myString, ["string", "number"]);
+console.log(`Value: "${myString}" | Allowed: ["string", "number"] | Valid: ${isStringAllowed}`); // Expected: true
+
+// Test Case 2: Number value
+const myNumber = 42;
+const isNumberAllowed = validateUnionType(myNumber, ["string", "number"]);
+console.log(`Value: ${myNumber} | Allowed: ["string", "number"] | Valid: ${isNumberAllowed}`); // Expected: true
+
+// Test Case 3: Boolean value (not allowed)
+const myBoolean = true;
+const isBooleanAllowed = validateUnionType(myBoolean, ["string", "number"]);
+console.log(`Value: ${myBoolean} | Allowed: ["string", "number"] | Valid: ${isBooleanAllowed}`); // Expected: false
+
+// Test Case 4: Object value
+const myObject = { name: "Alice", age: 25 };
+const isObjectAllowed = validateUnionType(myObject, ["string", "number", "object"]);
+console.log(`Value: ${JSON.stringify(myObject)} | Allowed: ["string", "number", "object"] | Valid: ${isObjectAllowed}`); // Expected: true
+
+// Test Case 5: Complex scenario
+const mixedValue = 100;
+// Check if value is string or boolean (it is a number, so should be false)
+const isMixedAllowed = validateUnionType(mixedValue, ["string", "boolean"]);
+console.log(`Value: ${mixedValue} | Allowed: ["string", "boolean"] | Valid: ${isMixedAllowed}`); // Expected: false

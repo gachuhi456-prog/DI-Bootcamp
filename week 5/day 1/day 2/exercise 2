@@ -1,0 +1,91 @@
+// ==========================================
+// Exercise 1: Conditional Types
+// ==========================================
+console.log("--- Exercise 1: Conditional Types ---");
+
+// 1. Define a Conditional Type
+// If T is number, return number. If T is string, return number (the length).
+type MappedType = T extends number ? number : T extends string ? number : never;
+
+// 2. Implement the Function
+function mapType(value: T): MappedType {
+    if (typeof value === "number") {
+        // Return the square of the value
+        return value * value as MappedType;
+    } else {
+        // Return the length of the string
+        return value.length as MappedType;
+    }
+}
+
+// 3. Test the Function
+const numResult = mapType(5);       // Input: number, Output: 25
+const strResult = mapType("Hello"); // Input: string, Output: 5
+
+console.log(`mapType(5): ${numResult}`);          // Output: 25
+console.log(`mapType("Hello"): ${strResult}`);    // Output: 5
+
+
+// ==========================================
+// Exercise 2: Keyof and Lookup Types
+// ==========================================
+console.log("\n--- Exercise 2: Keyof and Lookup Types ---");
+
+// 1. Define the Function
+// K extends keyof T ensures 'key' is valid for 'obj'
+// T[K] is the lookup type that returns the specific type of the property
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+    return obj[key];
+}
+
+// 2. Test the Function
+const user = {
+    id: 101,
+    name: "Alice",
+    isActive: true,
+    role: "admin"
+};
+
+const userId = getProperty(user, "id");
+const userName = getProperty(user, "name");
+const userRole = getProperty(user, "role");
+
+console.log(`User ID: ${userId}`);       // Output: 101
+console.log(`User Name: ${userName}`);   // Output: Alice
+console.log(`User Role: ${userRole}`);   // Output: admin
+
+// The following line would cause a compile-time error because "age" is not a key of user
+// const userAge = getProperty(user, "age"); 
+
+
+// ==========================================
+// Exercise 3: Using Interfaces with Numeric Properties
+// ==========================================
+console.log("\n--- Exercise 3: Interfaces with Numeric Properties ---");
+
+// 1. Define an Interface
+// This interface describes objects where any property accessed by a string key has a numeric value
+interface HasNumericProperty {
+    [key: string]: number;
+}
+
+// 2. Implement the Function
+// Takes an object adhering to the interface, a specific property key, and a factor
+function multiplyProperty(obj: HasNumericProperty, key: string, factor: number): number {
+    const value = obj[key];
+    return value * factor;
+}
+
+// 3. Test the Function
+// Define an object that fits the interface (all property values are numbers)
+const dimensions = {
+    width: 10,
+    height: 20,
+    depth: 5
+};
+
+const area = multiplyProperty(dimensions, "width", 5);   // 10 * 5 = 50
+const volume = multiplyProperty(dimensions, "depth", 10); // 5 * 10 = 50
+
+console.log(`Width multiplied by 5: ${area}`);     // Output: 50
+console.log(`Depth multiplied by 10: ${volume}`);  // Output: 50

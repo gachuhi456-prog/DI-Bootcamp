@@ -1,0 +1,85 @@
+type Person = {
+    name: string;
+    age: number;
+};
+
+type Address = {
+    street: string;
+    city: string;
+};
+
+// Intersection Type
+type PersonWithAddress = Person & Address;
+
+// Create a variable of this type
+const person1: PersonWithAddress = {
+    name: "Alice",
+    age: 25,
+    street: "123 Main Street",
+    city: "New York"
+};
+
+console.log(person1);
+
+function describeValue(value: number | string): string {
+    if (typeof value === "number") {
+        return "This is a number";
+    } else {
+        return "This is a string";
+    }
+}
+
+// Test
+console.log(describeValue(50));
+console.log(describeValue("Hello"));
+
+let someValue: any = "TypeScript is awesome";
+
+// Cast to string
+let strValue: string = someValue as string;
+
+// Use it as a string
+console.log(strValue.toUpperCase());
+
+function getFirstElement(arr: (number | string)[]): string {
+    return arr[0] as string;
+}
+
+// Test with mixed arrays
+console.log(getFirstElement(["Apple", 10, 20]));
+console.log(getFirstElement(["Hello", 5, "World"]));
+
+function logLength<T extends { length: number }>(value: T): void {
+    console.log("Length:", value.length);
+}
+
+// Test
+logLength("TypeScript");
+logLength([1, 2, 3, 4]);
+
+type Person = {
+    name: string;
+    age: number;
+};
+
+type Job = {
+    position: string;
+    department: string;
+};
+
+// Intersection Type
+type Employee = Person & Job;
+
+function formatInput<T extends { toString(): string }>(input: T): string {
+
+    // Convert to string
+    const formatted = input.toString() as string;
+
+    return `Formatted Input: ${formatted}`;
+}
+
+// Test
+console.log(formatInput(123));
+console.log(formatInput(true));
+console.log(formatInput("TypeScript"));
+

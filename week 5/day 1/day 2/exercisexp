@@ -1,0 +1,124 @@
+// Exercise 1
+console.log("Hello, World!");
+
+// Exercise 2
+let age: number = 25;
+let name: string = "Alice";
+
+console.log("Age:", age);
+console.log("Name:", name);
+
+// Exercise 3
+let id: string | number;
+
+id = 101;
+console.log(id);
+
+id = "EMP001";
+console.log(id);
+
+// Exercise 4
+function checkNumber(num: number): string {
+    if (num > 0) {
+        return "Positive";
+    } else if (num < 0) {
+        return "Negative";
+    } else {
+        return "Zero";
+    }
+}
+
+// Test cases
+console.log(checkNumber(10));
+console.log(checkNumber(-8));
+console.log(checkNumber(0));
+
+// Exercise 5
+function getDetails(name: string, age: number): [string, number, string] {
+    const message = `Hello, ${name}! You are ${age} years old.`;
+
+    return [name, age, message];
+}
+
+// Call the function
+const details = getDetails("Alice", 25);
+
+console.log(details);
+
+// Exercise 6
+
+// Define the Person type
+type Person = {
+    name: string;
+    age: number;
+};
+
+// Create the function
+function createPerson(name: string, age: number): Person {
+    return {
+        name: name,
+        age: age
+    };
+}
+
+// Test the function
+const person = createPerson("John", 30);
+
+console.log(person);
+
+{ name: 'John', age: 30 }
+
+// Exercise 7
+
+// Retrieve the element
+const inputElement = document.getElementById("username") as HTMLInputElement;
+
+// Set the value
+inputElement.value = "Alex";
+
+// Display the value
+console.log(inputElement.value);
+
+// Exercise 8
+function getAction(role: string): string {
+    switch (role.toLowerCase()) {
+        case "admin":
+            return "Manage users and settings";
+
+        case "editor":
+            return "Edit content";
+
+        case "viewer":
+            return "View content";
+
+        case "guest":
+            return "Limited access";
+
+        default:
+            return "Invalid role";
+    }
+}
+
+// Test the function
+console.log(getAction("admin"));
+console.log(getAction("editor"));
+console.log(getAction("viewer"));
+console.log(getAction("guest"));
+console.log(getAction("unknown"));
+
+// Exercise 9
+
+// Overload signatures
+function greet(): string;
+function greet(name: string): string;
+
+// Function implementation
+function greet(name: string = "Guest"): string {
+    return `Hello, ${name}!`;
+}
+
+// Test cases
+console.log(greet());
+console.log(greet("Alice"));
+
+
