@@ -1,0 +1,97 @@
+import React from "react";
+
+function BootstrapCard(props) {
+  return (
+    <div className="card m-5" style={{ width: "30rem" }}>
+      <img className="card-img-top" src={props.imageUrl} alt="Card image cap" />
+
+      <div className="card-body">
+        <h5 className="card-title">{props.title}</h5>
+
+        <p className="card-text">{props.description}</p>
+
+        <a
+          href={props.buttonUrl}
+          className="btn btn-primary"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {props.buttonLabel}
+        </a>
+      </div>
+    </div>
+  );
+}
+
+export default BootstrapCard;
+
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import BootstrapCard from "./BootstrapCard";
+
+function App() {
+  const celebrities = [
+    {
+      title: "Bob Dylan",
+      imageUrl:
+        "https://miro.medium.com/max/4800/1*_EDEWvWLREzlAvaQRfC_SQ.jpeg",
+      buttonLabel: "Go to Wikipedia",
+      buttonUrl: "https://en.wikipedia.org/wiki/Bob_Dylan",
+      description:
+        "Bob Dylan is an American singer/songwriter, author, and artist who has been influential for more than five decades.",
+    },
+    {
+      title: "McCartney",
+      imageUrl:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Paul_McCartney_in_October_2018.jpg/240px-Paul_McCartney_in_October_2018.jpg",
+      buttonLabel: "Go to Wikipedia",
+      buttonUrl: "https://en.wikipedia.org/wiki/Paul_McCartney",
+      description:
+        "Sir Paul McCartney is an English singer, songwriter, musician, and member of The Beatles.",
+    },
+  ];
+
+  return (
+    <div>
+      <BootstrapCard
+        title={celebrities[0].title}
+        imageUrl={celebrities[0].imageUrl}
+        buttonLabel={celebrities[0].buttonLabel}
+        buttonUrl={celebrities[0].buttonUrl}
+        description={celebrities[0].description}
+      />
+
+      <BootstrapCard
+        title={celebrities[1].title}
+        imageUrl={celebrities[1].imageUrl}
+        buttonLabel={celebrities[1].buttonLabel}
+        buttonUrl={celebrities[1].buttonUrl}
+        description={celebrities[1].description}
+      />
+    </div>
+  );
+}
+
+export default App;
+
+<ul className="list-group m-5">
+  {planets.map((planet, index) => {
+    return (
+      <li key={index} className="list-group-item">
+        {planet}
+      </li>
+    );
+  })}
+</ul>
+
+const planets = ["Mars", "Venus", "Jupiter", "Earth", "Saturn", "Neptune"];
+
+<ul className="list-group m-5">
+  {planets.map((planet, index) => {
+    return (
+      <li key={index} className="list-group-item">
+        {planet}
+      </li>
+    );
+  })}
+</ul>

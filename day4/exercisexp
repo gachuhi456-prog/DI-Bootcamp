@@ -1,0 +1,114 @@
+import React from "react";
+import UserFavoriteAnimals from "./UserFavoriteAnimals";
+import Exercise from "./Exercise3";
+
+function App() {
+  const myelement = <h1>I Love JSX!</h1>;
+  const sum = 5 + 5;
+
+  return (
+    <div>
+      <p>Hello World!</p>
+
+      {myelement}
+
+      <p>React is {sum} times better with JSX</p>
+
+      {/* Exercise 2 */}
+      <UserFavoriteAnimals />
+
+      {/* Exercise 3 */}
+      <Exercise />
+    </div>
+  );
+}
+
+export default App;
+
+import React from "react";
+
+const user = {
+  firstName: "Bob",
+  lastName: "Dylan",
+  favAnimals: ["Horse", "Turtle", "Elephant", "Monkey"],
+};
+
+class UserFavoriteAnimals extends React.Component {
+  render() {
+    return (
+      <div>
+        <h3>{user.firstName}</h3>
+        <h3>{user.lastName}</h3>
+
+        <ul>
+          {user.favAnimals.map((animal, index) => {
+            return <li key={index}>{animal}</li>;
+          })}
+        </ul>
+      </div>
+    );
+  }
+}
+
+export default UserFavoriteAnimals;
+
+import React from "react";
+import "./Exercise.css";
+
+const style_header = {
+  color: "white",
+  backgroundColor: "DodgerBlue",
+  padding: "10px",
+  fontFamily: "Arial",
+};
+
+class Exercise extends React.Component {
+  render() {
+    return (
+      <div>
+        {/* Styled h1 */}
+        <h1 style={style_header}>This is a Styled Header</h1>
+
+        {/* Paragraph with CSS class */}
+        <p className="para">
+          This is a paragraph styled using an external CSS file.
+        </p>
+
+        {/* Link */}
+        <a href="https://reactjs.org" target="_blank" rel="noreferrer">
+          Learn React
+        </a>
+
+        {/* Form */}
+        <form>
+          <input type="text" placeholder="Enter name" />
+          <button type="submit">Submit</button>
+        </form>
+
+        {/* Image */}
+        <img
+          src="https://reactjs.org/logo-og.png"
+          alt="React"
+          width="150"
+        />
+
+        {/* List */}
+        <ul>
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>React</li>
+        </ul>
+      </div>
+    );
+  }
+}
+
+export default Exercise;
+
+.para {
+  background-color: #282c34;
+  color: white;
+  padding: 40px;
+  font-family: Arial;
+  text-align: center;
+}

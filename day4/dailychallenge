@@ -1,0 +1,56 @@
+npm install react-responsive-carousel
+
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+
+import React from "react";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+
+function App() {
+  return (
+    <div>
+      <h1>React Carousel</h1>
+
+      <Carousel
+        showThumbs={false}
+        autoPlay
+        infiniteLoop
+        showStatus={false}
+      >
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d"
+            alt="Hong Kong"
+          />
+          <p className="legend">Hong Kong</p>
+        </div>
+
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf"
+            alt="Macao"
+          />
+          <p className="legend">Macao</p>
+        </div>
+
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1505069190533-da1c9af13346"
+            alt="Japan"
+          />
+          <p className="legend">Japan</p>
+        </div>
+
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6"
+            alt="Las Vegas"
+          />
+          <p className="legend">Las Vegas</p>
+        </div>
+      </Carousel>
+    </div>
+  );
+}
+
+export default App;
