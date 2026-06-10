@@ -1,0 +1,52 @@
+dailychallenge
+import React, { useState } from "react";
+
+function App() {
+  const [languages, setLanguages] = useState([
+    { name: "PHP", votes: 0 },
+    { name: "Python", votes: 0 },
+    { name: "JavaScript", votes: 0 },
+    { name: "Java", votes: 0 }
+  ]);
+
+  // Function to increase votes
+  const handleVote = (index) => {
+    const updatedLanguages = [...languages];
+    updatedLanguages[index].votes += 1;
+    setLanguages(updatedLanguages);
+  };
+
+  return (
+    <div className="App">
+      <h1>Vote Your Language!</h1>
+
+      {languages.map((language, index) => (
+        <div
+          key={index}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "10px",
+            border: "1px solid #ccc",
+            padding: "10px"
+          }}
+        >
+          <div style={{ width: "50px", fontWeight: "bold" }}>
+            {language.votes}
+          </div>
+
+          <div style={{ flex: 1 }}>
+            <h3>{language.name}</h3>
+          </div>
+
+          <button onClick={() => handleVote(index)}>
+            Click Here
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default App;
+
