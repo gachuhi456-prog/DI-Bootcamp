@@ -1,0 +1,181 @@
+mkdir express-ex-2
+cd express-ex-2
+npm init -y
+npm install express
+
+const express = require('express');
+const todosRouter = require('./routes/todos');
+
+const app = express();
+const PORT = 3000;
+
+// IMPORTANT: This middleware allows Express to read JSON data sent in the body
+app.use(express.json());
+
+// Mount the router
+app.use('/todos', todosRouter);
+
+app.listen(PORT, () => {
+    console.log(`To-Do API running at http://localhost:${PORT}`);
+});
+
+const express = require('express');
+const router = express.Router();
+
+// Homepage route
+router.get('/', (req, res) => {
+    res.send('<h1>Homepage</h1><p>Welcome to the Express App!</p>');
+});
+
+// About Us page route
+router.get('/about', (req, res) => {
+    res.send('<h1>About Us</h1><p>This is a simple Express.js application.</p>');
+});
+
+module.exports = router;
+
+node app.js
+
+mkdir express-ex-2
+cd express-ex-2
+npm init -y
+npm install express
+
+const express = require('express');
+const todosRouter = require('./routes/todos');
+
+const app = express();
+const PORT = 3000;
+
+// IMPORTANT: This middleware allows Express to read JSON data sent in the body
+app.use(express.json());
+
+// Mount the router
+app.use('/todos', todosRouter);
+
+app.listen(PORT, () => {
+    console.log(`To-Do API running at http://localhost:${PORT}`);
+});
+
+const express = require('express');
+const router = express.Router();
+
+// In-memory database
+let todos = [];
+let idCounter = 1;
+
+// 1. Get all to-do items
+router.get('/', (req, res) => {
+    res.json(todos);
+});
+
+// 2. Add a new to-do item
+router.post('/', (req, res) => {
+    const { task } = req.body;
+    if (!task) return res.status(400).json({ error: "Task is required" });
+
+    const newTodo = { id: idCounter++, task, completed: false };
+    todos.push(newTodo);
+    res.status(201).json(newTodo);
+});
+
+// 3. Update a to-do item by ID
+router.put('/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const todo = todos.find(t => t.id === id);
+    
+    if (!todo) return res.status(404).json({ error: "To-do not found" });
+
+    const { task, completed } = req.body;
+    if (task) todo.task = task;
+    if (typeof completed === 'boolean') todo.completed = completed;
+
+    res.json(todo);
+});
+
+// 4. Delete a to-do item by ID
+router.delete('/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = todos.findIndex(t => t.id === id);
+
+    if (index === -1) return res.status(404).json({ error: "To-do not found" });
+
+    const deleted = todos.splice(index, 1);
+    res.json({ message: "Deleted", todo: deleted[0] });
+});
+
+module.exports = router;
+
+mkdir express-ex-3
+cd express-ex-3
+npm init -y
+npm install express
+
+const express = require('express');
+const booksRouter = require('./routes/books');
+
+const app = express();
+const PORT = 3000;
+
+// Middleware to parse JSON
+app.use(express.json());
+
+// Mount the router
+app.use('/books', booksRouter);
+
+app.listen(PORT, () => {
+    console.log(`Books API running at http://localhost:${PORT}`);
+});
+
+const express = require('express');
+const router = express.Router();
+
+// In-memory database
+let books = [];
+let idCounter = 1;
+
+// 1. Get all books
+router.get('/', (req, res) => {
+    res.json(books);
+});
+
+// 2. Add a new book
+router.post('/', (req, res) => {
+    const { title, author } = req.body;
+    if (!title || !author) {
+        return res.status(400).json({ error: "Title and Author are required" });
+    }
+
+    const newBook = { id: idCounter++, title, author };
+    books.push(newBook);
+    res.status(201).json(newBook);
+});
+
+// 3. Update a book by ID
+router.put('/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const book = books.find(b => b.id === id);
+
+    if (!book) return res.status(404).json({ error: "Book not found" });
+
+    const { title, author } = req.body;
+    if (title) book.title = title;
+    if (author) book.author = author;
+
+    res.json(book);
+});
+
+// 4. Delete a book by ID
+router.delete('/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = books.findIndex(b => b.id === id);
+
+    if (index === -1) return res.status(404).json({ error: "Book not found" });
+
+    const deleted = books.splice(index, 1);
+    res.json({ message: "Book deleted", book: deleted[0] });
+});
+
+module.exports = router;
+
+node app.js

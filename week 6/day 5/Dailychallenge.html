@@ -1,0 +1,271 @@
+Dailychallenge
+mkdir emoji-game
+cd emoji-game
+
+npm init -y
+npm install express
+
+const express = require("express");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+app.use(express.static("public"));
+
+const emojis = [
+    { emoji: "😀", name: "Smile" },
+    { emoji: "🐶", name: "Dog" },
+    { emoji: "🌮", name: "Taco" },
+    { emoji: "🍕", name: "Pizza" },
+    { emoji: "🚗", name: "Car" },
+    { emoji: "🐱", name: "Cat" },
+    { emoji: "🌈", name: "Rainbow" },
+    { emoji: "⚽", name: "Soccer" },
+    { emoji: "🍎", name: "Apple" },
+    { emoji: "🎸", name: "Guitar" }
+];
+
+let score = 0;
+
+let leaderboard = [
+    {
+        player: "Alex",
+        score: 5
+    }
+];
+
+function shuffle(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+}
+
+function generateQuestion() {
+
+    const correctEmoji =
+        emojis[Math.floor(Math.random() * emojis.length)];
+
+    const wrongOptions = shuffle(
+        emojis.filter(e => e.name !== correctEmoji.name)
+    ).slice(0, 3);
+
+    const options = shuffle([
+        correctEmoji.name,
+        ...wrongOptions.map(e => e.name)
+    ]);
+
+    return {
+        emoji: correctEmoji.emoji,
+        answer: correctEmoji.name,
+        options
+    };
+}
+
+let currentQuestion = generateQuestion();
+
+
+// GET question
+app.get("/question", (req, res) => {
+    res.json({
+        emoji: currentQuestion.emoji,
+        options: currentQuestion.options,
+        score
+    });
+});
+
+
+// POST answer
+app.post("/guess", (req, res) => {
+
+    const { guess } = req.body;
+
+    let correct = false;
+
+    if (guess === currentQuestion.answer) {
+        score++;
+        correct = true;
+    }
+
+    currentQuestion = generateQuestion();
+
+    res.json({
+        correct,
+        score
+    });
+});
+
+
+// Leaderboard
+app.get("/leaderboard", (req, res) => {
+
+    leaderboard.push({
+        player: "Player",
+        score
+    });
+
+    leaderboard.sort((a, b) => b.score - a.score);
+
+    res.json(leaderboard.slice(0, 10));
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emoji Guessing Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Emoji Guessing Game 😀</h1>
+
+<h2 id="emoji"></h2>
+
+<form id="gameForm">
+
+    <div id="options"></div>
+
+    <button type="submit">
+        Submit Guess
+    </button>
+
+</form>
+
+<h3 id="feedback"></h3>
+
+<h2>
+    Score:
+    <span id="score">0</span>
+</h2>
+
+<h2>Leaderboard</h2>
+
+<ul id="leaderboard"></ul>
+
+<script src="script.js"></script>
+
+</body>
+</html>
+const emojiElement = document.getElementById("emoji");
+const optionsDiv = document.getElementById("options");
+const feedback = document.getElementById("feedback");
+const scoreElement = document.getElementById("score");
+const leaderboardList = document.getElementById("leaderboard");
+
+
+async function loadQuestion() {
+
+    const response = await fetch("/question");
+
+    const data = await response.json();
+
+    emojiElement.textContent = data.emoji;
+
+    scoreElement.textContent = data.score;
+
+    optionsDiv.innerHTML = "";
+
+    data.options.forEach(option => {
+
+        optionsDiv.innerHTML += `
+        <label>
+            <input
+                type="radio"
+                name="guess"
+                value="${option}"
+                required>
+            ${option}
+        </label>
+        <br>
+        `;
+    });
+}
+
+
+document.getElementById("gameForm")
+.addEventListener("submit", async e => {
+
+    e.preventDefault();
+
+    const guess =
+        document.querySelector(
+            'input[name="guess"]:checked'
+        ).value;
+
+    const response = await fetch("/guess", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            guess
+        })
+    });
+
+    const result = await response.json();
+
+    if (result.correct) {
+        feedback.textContent = "✅ Correct!";
+    } else {
+        feedback.textContent = "❌ Wrong!";
+    }
+
+    scoreElement.textContent = result.score;
+
+    loadQuestion();
+
+    loadLeaderboard();
+});
+
+
+async function loadLeaderboard() {
+
+    const response = await fetch("/leaderboard");
+
+    const scores = await response.json();
+
+    leaderboardList.innerHTML = "";
+
+    scores.forEach(player => {
+
+        leaderboardList.innerHTML += `
+        <li>
+            ${player.player} - ${player.score}
+        </li>
+        `;
+    });
+}
+
+
+loadQuestion();
+loadLeaderboard();
+
+
+
+body{
+    text-align:center;
+    font-family:Arial;
+}
+
+#emoji{
+    font-size:100px;
+}
+
+label{
+    display:block;
+    margin:10px;
+}
+
+button{
+    padding:10px 20px;
+    cursor:pointer;
+}
+
+#feedback{
+    color:green;
+}

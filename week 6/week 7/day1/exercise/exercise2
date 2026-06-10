@@ -1,0 +1,154 @@
+mkdir emoji-greet
+cd emoji-greet
+npm init -y
+npm install express
+
+const express = require('express');
+const greetingRouter = require('./routes/greeting');
+
+const app = express();
+const PORT = 3000;
+
+// Middleware to parse form data (needed for POST requests)
+app.use(express.urlencoded({ extended: true }));
+
+// Mount the router
+app.use('/', greetingRouter);
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Emoji App running at http://localhost:${PORT}`);
+});
+
+const express = require('express');
+const router = express.Router();
+
+// List of available emojis
+const emojis = ["😀", "🎉", "🌟", "🎈", "👋"];
+
+// Route 1: GET / - Display the form
+router.get('/', (req, res) => {
+    // Generate the HTML options for the dropdown dynamically
+    const emojiOptions = emojis
+        .map(emoji => `<option value="${emoji}">${emoji}</option>`)
+        .join('');
+
+    const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Emoji Greeting</title>
+            <style>
+                body { 
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                    display: flex; 
+                    justify-content: center; 
+                    align-items: center; 
+                    height: 100vh; 
+                    background-color: #f0f2f5;
+                    margin: 0;
+                }
+                .card {
+                    background: white;
+                    padding: 40px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    text-align: center;
+                }
+                input, select {
+                    padding: 10px;
+                    margin: 10px 0;
+                    width: 100%;
+                    box-sizing: border-box;
+                    font-size: 16px;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                }
+                button {
+                    background-color: #007BFF;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    width: 100%;
+                }
+                button:hover { background-color: #0056b3; }
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <h2>Create Your Greeting</h2>
+                <form action="/greet" method="POST">
+                    <input type="text" name="name" placeholder="Enter your name..." required>
+                    <select name="emoji">
+                        ${emojiOptions}
+                    </select>
+                    <button type="submit">Get Greeting!</button>
+                </form>
+            </div>
+        </body>
+        </html>
+    `;
+    res.send(html);
+});
+
+// Route 2: POST /greet - Process the form
+router.post('/greet', (req, res) => {
+    const { name, emoji } = req.body;
+
+    // Validation: Ensure the user entered a name
+    if (!name || name.trim() === '') {
+        return res.send('<h1 style="color:red; text-align:center;">Error: Please enter your name.</h1><p style="text-align:center;"><a href="/">Try Again</a></p>');
+    }
+
+    const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Greeting Result</title>
+            <style>
+                body { 
+                    font-family: sans-serif; 
+                    display: flex; 
+                    justify-content: center; 
+                    align-items: center; 
+                    height: 100vh; 
+                    background-color: #e0f7fa; 
+                    margin: 0;
+                }
+                .message {
+                    font-size: 3rem;
+                    text-align: center;
+                    background: white;
+                    padding: 50px;
+                    border-radius: 15px;
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                    animation: popIn 0.5s ease-out;
+                }
+                a {
+                    display: block;
+                    margin-top: 20px;
+                    text-decoration: none;
+                    color: #007BFF;
+                    font-size: 1.2rem;
+                }
+                @keyframes popIn {
+                    0% { transform: scale(0.5); opacity: 0; }
+                    100% { transform: scale(1); opacity: 1; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="message">
+                ${emoji} Hello, ${name}! ${emoji}
+                <a href="/">Create Another</a>
+            </div>
+        </body>
+        </html>
+    `;
+    res.send(html);
+});
+
+module.exports = router;
