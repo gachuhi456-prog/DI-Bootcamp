@@ -1,0 +1,442 @@
+exercisexp
+export interface RecipeItem {
+  id: string;
+  title: string;
+  ingredients: string[];
+  instructions: string;
+  isFavorite: boolean;
+}
+
+import { RecipeItem } from "./RecipeItem";
+import { v4 as uuidv4 } from "uuid";
+
+export class RecipeCollection {
+  private recipes: RecipeItem[] = [];
+
+  constructor() {
+    this.load();
+  }
+
+  getRecipes(): RecipeItem[] {
+    return this.recipes;
+  }
+
+  addRecipe(
+    title: string,
+    ingredients: string[],
+    instructions: string
+  ): void {
+    const newRecipe: RecipeItem = {
+      id: uuidv4(),
+      title,
+      ingredients,
+      instructions,
+      isFavorite: false,
+    };
+
+    this.recipes.push(newRecipe);
+    this.save();
+  }
+
+  removeRecipe(id: string): void {
+    this.recipes = this.recipes.filter(recipe => recipe.id !== id);
+    this.save();
+  }
+
+  toggleFavorite(id: string): void {
+    const recipe = this.recipes.find(recipe => recipe.id === id);
+
+    if (recipe) {
+      recipe.isFavorite = !recipe.isFavorite;
+      this.save();
+    }
+  }
+
+  clearRecipes(): void {
+    this.recipes = [];
+    this.save();
+  }
+
+  save(): void {
+    localStorage.setItem(
+      "recipes",
+      JSON.stringify(this.recipes)
+    );
+  }
+
+  load(): void {
+    const data = localStorage.getItem("recipes");
+
+    if (data) {
+      this.recipes = JSON.parse(data);
+    }
+  }
+}
+
+import { RecipeCollection } from "../model/RecipeCollection";
+
+export class RecipeTemplate {
+  constructor(
+    private container: HTMLElement,
+    private collection: RecipeCollection
+  ) {}
+
+  render(): void {
+    this.container.innerHTML = "";
+
+    this.collection.getRecipes().forEach(recipe => {
+      const card = document.createElement("div");
+      card.className = "recipe-card";
+
+      card.innerHTML = `
+        <h2>${recipe.title}</h2>
+
+        <button class="favorite-btn">
+          ${recipe.isFavorite ? "★ Favorite" : "☆ Favorite"}
+        </button>
+
+        <button class="toggle-details">
+          Show Details
+        </button>
+
+        <button class="delete-btn">
+          Delete
+        </button>
+
+        <div class="details" style="display:none">
+          <h3>Ingredients</h3>
+          <ul>
+            ${recipe.ingredients
+              .map(item => `<li>${item}</li>`)
+              .join("")}
+          </ul>
+
+          <h3>Instructions</h3>
+          <p>${recipe.instructions}</p>
+        </div>
+      `;
+
+      const favoriteBtn =
+        card.querySelector(".favorite-btn") as HTMLButtonElement;
+
+      favoriteBtn.addEventListener("click", () => {
+        this.collection.toggleFavorite(recipe.id);
+        this.render();
+      });
+
+      const deleteBtn =
+        card.querySelector(".delete-btn") as HTMLButtonElement;
+
+      deleteBtn.addEventListener("click", () => {
+        this.collection.removeRecipe(recipe.id);
+        this.render();
+      });
+
+      const toggleBtn =
+        card.querySelector(".toggle-details") as HTMLButtonElement;
+
+      const details =
+        card.querySelector(".details") as HTMLDivElement;
+
+      toggleBtn.addEventListener("click", () => {
+        if (details.style.display === "none") {
+          details.style.display = "block";
+          toggleBtn.textContent = "Hide Details";
+        } else {
+          details.style.display = "none";
+          toggleBtn.textContent = "Show Details";
+        }
+      });
+
+      this.container.appendChild(card);
+    });
+  }
+}
+
+import { RecipeCollection } from "../model/RecipeCollection";
+
+export class RecipeTemplate {
+  constructor(
+    private container: HTMLElement,
+    private collection: RecipeCollection
+  ) {}
+
+  render(): void {
+    this.container.innerHTML = "";
+
+    this.collection.getRecipes().forEach(recipe => {
+      const card = document.createElement("div");
+      card.className = "recipe-card";
+
+      card.innerHTML = `
+        <h2>${recipe.title}</h2>
+
+        <button class="favorite-btn">
+          ${recipe.isFavorite ? "★ Favorite" : "☆ Favorite"}
+        </button>
+
+        <button class="toggle-details">
+          Show Details
+        </button>
+
+        <button class="delete-btn">
+          Delete
+        </button>
+
+        <div class="details" style="display:none">
+          <h3>Ingredients</h3>
+          <ul>
+            ${recipe.ingredients
+              .map(item => `<li>${item}</li>`)
+              .join("")}
+          </ul>
+
+          <h3>Instructions</h3>
+          <p>${recipe.instructions}</p>
+        </div>
+      `;
+
+      const favoriteBtn =
+        card.querySelector(".favorite-btn") as HTMLButtonElement;
+
+      favoriteBtn.addEventListener("click", () => {
+        this.collection.toggleFavorite(recipe.id);
+        this.render();
+      });
+
+      const deleteBtn =
+        card.querySelector(".delete-btn") as HTMLButtonElement;
+
+      deleteBtn.addEventListener("click", () => {
+        this.collection.removeRecipe(recipe.id);
+        this.render();
+      });
+
+      const toggleBtn =
+        card.querySelector(".toggle-details") as HTMLButtonElement;
+
+      const details =
+        card.querySelector(".details") as HTMLDivElement;
+
+      toggleBtn.addEventListener("click", () => {
+        if (details.style.display === "none") {
+          details.style.display = "block";
+          toggleBtn.textContent = "Hide Details";
+        } else {
+          details.style.display = "none";
+          toggleBtn.textContent = "Show Details";
+        }
+      });
+
+      this.container.appendChild(card);
+    });
+  }
+}
+
+import "./style.css";
+import { RecipeCollection } from "./model/RecipeCollection";
+import { RecipeTemplate } from "./templates/RecipeTemplate";
+
+const form = document.getElementById(
+  "recipeEntryForm"
+) as HTMLFormElement;
+
+const titleInput = document.getElementById(
+  "recipeTitle"
+) as HTMLInputElement;
+
+const ingredientsInput = document.getElementById(
+  "ingredients"
+) as HTMLTextAreaElement;
+
+const instructionsInput = document.getElementById(
+  "instructions"
+) as HTMLTextAreaElement;
+
+const container = document.getElementById(
+  "recipeContainer"
+) as HTMLDivElement;
+
+const clearButton = document.getElementById(
+  "clearRecipesButton"
+) as HTMLButtonElement;
+
+const collection = new RecipeCollection();
+const template = new RecipeTemplate(container, collection);
+
+template.render();
+
+form.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const title = titleInput.value.trim();
+
+  const ingredients = ingredientsInput.value
+    .split("\n")
+    .map(item => item.trim())
+    .filter(item => item !== "");
+
+  const instructions = instructionsInput.value.trim();
+
+  collection.addRecipe(title, ingredients, instructions);
+
+  template.render();
+
+  form.reset();
+});
+
+clearButton.addEventListener("click", () => {
+  collection.clearRecipes();
+  template.render();
+});
+
+import "./style.css";
+import { RecipeCollection } from "./model/RecipeCollection";
+import { RecipeTemplate } from "./templates/RecipeTemplate";
+
+const form = document.getElementById(
+  "recipeEntryForm"
+) as HTMLFormElement;
+
+const titleInput = document.getElementById(
+  "recipeTitle"
+) as HTMLInputElement;
+
+const ingredientsInput = document.getElementById(
+  "ingredients"
+) as HTMLTextAreaElement;
+
+const instructionsInput = document.getElementById(
+  "instructions"
+) as HTMLTextAreaElement;
+
+const container = document.getElementById(
+  "recipeContainer"
+) as HTMLDivElement;
+
+const clearButton = document.getElementById(
+  "clearRecipesButton"
+) as HTMLButtonElement;
+
+const collection = new RecipeCollection();
+const template = new RecipeTemplate(container, collection);
+
+template.render();
+
+form.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const title = titleInput.value.trim();
+
+  const ingredients = ingredientsInput.value
+    .split("\n")
+    .map(item => item.trim())
+    .filter(item => item !== "");
+
+  const instructions = instructionsInput.value.trim();
+
+  collection.addRecipe(title, ingredients, instructions);
+
+  template.render();
+
+  form.reset();
+});
+
+clearButton.addEventListener("click", () => {
+  collection.clearRecipes();
+  template.render();
+});
+
+<div class="recipe-app">
+  <h1>Recipe Book</h1>
+
+  <form id="recipeEntryForm">
+    <input
+      type="text"
+      id="recipeTitle"
+      placeholder="Recipe Title"
+      required
+    />
+
+    <textarea
+      id="ingredients"
+      placeholder="Enter ingredients (one per line)"
+      required
+    ></textarea>
+
+    <textarea
+      id="instructions"
+      placeholder="Enter cooking instructions"
+      required
+    ></textarea>
+
+    <button type="submit">
+      Add Recipe
+    </button>
+  </form>
+
+  <div id="recipeContainer"></div>
+
+  <button id="clearRecipesButton">
+    Clear All Recipes
+  </button>
+
+  <script type="module" src="/src/main.ts"></script>
+</div>
+
+body {
+  background: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.recipe-app {
+  width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input,
+textarea {
+  padding: 10px;
+  font-size: 16px;
+}
+
+button {
+  padding: 12px;
+  cursor: pointer;
+}
+
+#recipeContainer {
+  margin-top: 30px;
+}
+
+.recipe-card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,.1);
+}
+
+.recipe-card h2 {
+  color: #333;
+}
+
+.recipe-card button {
+  margin-right: 10px;
+}
+
+.details {
+  margin-top: 15px;
+}
+
