@@ -1,0 +1,8 @@
+exercisexp
+npm create vite@latest react-typescript-app -- --template react-ts
+
+cd react-typescript-app
+
+npm install
+
+npm run dev
