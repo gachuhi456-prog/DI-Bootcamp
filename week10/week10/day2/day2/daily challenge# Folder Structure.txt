@@ -1,0 +1,299 @@
+daily challenge# Folder Structure
+
+```text
+portfolio/
+│
+├── index.html
+├── style.css
+├── script.js
+└── images/
+```
+
+---
+
+# index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex | Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <nav>
+        <h2 class="logo">Alex</h2>
+
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section id="home">
+    <div class="hero">
+        <h1>Hello, I'm <span>Alex</span></h1>
+        <h3>Web Developer | Software Developer</h3>
+
+        <p>
+            Building modern and responsive applications with
+            JavaScript, TypeScript, React and Node.js.
+        </p>
+
+        <a href="#projects" class="btn">
+            View Projects
+        </a>
+    </div>
+</section>
+
+<section id="about" class="fade">
+    <h2>About Me</h2>
+
+    <p>
+        I am passionate about software development and
+        enjoy creating practical and elegant solutions.
+    </p>
+</section>
+
+<section id="skills" class="fade">
+
+    <h2>Skills</h2>
+
+    <div class="skills-container">
+
+        <div class="card">HTML</div>
+        <div class="card">CSS</div>
+        <div class="card">JavaScript</div>
+        <div class="card">TypeScript</div>
+        <div class="card">React</div>
+        <div class="card">Redux Toolkit</div>
+        <div class="card">Node.js</div>
+        <div class="card">Express.js</div>
+        <div class="card">MongoDB</div>
+        <div class="card">Git</div>
+
+    </div>
+
+</section>
+
+<section id="projects" class="fade">
+
+    <h2>Projects</h2>
+
+    <div class="project-grid">
+
+        <div class="project-card">
+            <h3>Digital Records Management System</h3>
+            <p>
+                Document upload, PDF generation,
+                user roles and audit logs.
+            </p>
+        </div>
+
+        <div class="project-card">
+            <h3>Currency Converter</h3>
+            <p>
+                Currency conversion using ExchangeRate API.
+            </p>
+        </div>
+
+        <div class="project-card">
+            <h3>Star Wars Web App</h3>
+            <p>
+                Random Star Wars characters using AJAX.
+            </p>
+        </div>
+
+        <div class="project-card">
+            <h3>Recipe Book App</h3>
+            <p>
+                TypeScript recipe manager with local storage.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<section id="contact" class="fade">
+
+    <h2>Contact Me</h2>
+
+    <p>Email: your-email@example.com</p>
+
+    <p>LinkedIn: linkedin.com/in/yourusername</p>
+
+</section>
+
+<footer>
+    <p>© 2026 Alex | All Rights Reserved</p>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
+```
+
+---
+
+# style.css
+
+```css
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+header{
+    position:fixed;
+    width:100%;
+    background:#1e293b;
+    padding:20px;
+}
+
+nav{
+    display:flex;
+    justify-content:space-between;
+}
+
+nav ul{
+    display:flex;
+    gap:30px;
+    list-style:none;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+}
+
+section{
+    min-height:100vh;
+    padding:120px 10%;
+}
+
+.hero{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.hero h1{
+    font-size:4rem;
+}
+
+.hero span{
+    color:#38bdf8;
+}
+
+.btn{
+    background:#38bdf8;
+    color:white;
+    padding:15px 30px;
+    text-decoration:none;
+    border-radius:10px;
+    margin-top:20px;
+}
+
+.skills-container{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(150px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:#1e293b;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    transition:.4s;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+}
+
+.project-grid{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+}
+
+.project-card{
+    background:#1e293b;
+    padding:25px;
+    border-radius:15px;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+}
+```
+
+---
+
+# script.js
+
+```javascript
+const observer = new IntersectionObserver(entries => {
+
+    entries.forEach(entry => {
+
+        if(entry.isIntersecting){
+            entry.target.classList.add("show");
+        }
+
+    });
+
+});
+
+document.querySelectorAll(".fade")
+.forEach(section => {
+
+    observer.observe(section);
+
+});
+```
+
+---
+
+# Add these styles to style.css
+
+```css
+.fade{
+    opacity:0;
+    transform:translateY(50px);
+    transition:1s;
+}
+
+.show{
+    opacity:1;
+    transform:translateY(0);
+}
+```
+
+k
